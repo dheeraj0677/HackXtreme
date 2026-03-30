@@ -47,20 +47,34 @@ def search_tool_run(query: str) -> str:
         return f"Search failed: {e}"
     return "\n".join(results)
 
-# ─── Qdrant (Local Vector DB) ─────────────────────────────────────────────
+# ─── Qdrant (Local Vector DB) — Lazy Singleton ───────────────────────────
+#
+# With uvicorn --reload, the module is re-imported in a NEW process before
+# the old one fully shuts down. Qdrant's local storage uses an exclusive
+# file lock, so eager initialization causes a "database already in use"
+# conflict. By deferring init to first use, we avoid the race entirely.
 
 QDRANT_PATH     = "./qdrant_data"
 COLLECTION_NAME = "global_sentry_memory"
 VECTOR_SIZE     = 384           # all-MiniLM-L6-v2 dimension
 
-client = QdrantClient(path=QDRANT_PATH)
-collections = client.get_collections().collections
-if not any(c.name == COLLECTION_NAME for c in collections):
-    client.create_collection(
-        collection_name=COLLECTION_NAME,
-        vectors_config=VectorParams(size=VECTOR_SIZE, distance=Distance.COSINE),
-    )
-    print(f"[GlobalSentry] Initialized Qdrant collection: {COLLECTION_NAME}")
+_qdrant_client = None  # lazy singleton
+
+def get_qdrant_client() -> QdrantClient:
+    """Returns a lazily-initialized QdrantClient singleton."""
+    global _qdrant_client
+    if _qdrant_client is None:
+        _qdrant_client = QdrantClient(path=QDRANT_PATH)
+        collections = _qdrant_client.get_collections().collections
+        if not any(c.name == COLLECTION_NAME for c in collections):
+            _qdrant_client.create_collection(
+                collection_name=COLLECTION_NAME,
+                vectors_config=VectorParams(size=VECTOR_SIZE, distance=Distance.COSINE),
+            )
+            print(f"[GlobalSentry] Initialized Qdrant collection: {COLLECTION_NAME}")
+        else:
+            print(f"[GlobalSentry] Qdrant collection '{COLLECTION_NAME}' ready.")
+    return _qdrant_client
 
 # ─── Mode-Aware Prompts ───────────────────────────────────────────────────
 
@@ -218,7 +232,7 @@ def retriever_node(state: AgentState):
         mode_filter = Filter(
             must=[FieldCondition(key="mode", match=MatchValue(value=mode))]
         )
-        vectorstore = Qdrant(client=client, collection_name=COLLECTION_NAME, embeddings=embeddings)
+        vectorstore = Qdrant(client=get_qdrant_client(), collection_name=COLLECTION_NAME, embeddings=embeddings)
         docs = vectorstore.similarity_search(news, k=3, filter=mode_filter)
         context = [doc.page_content for doc in docs]
         logs[-1] += f" Found {len(context)} item(s)."
@@ -299,7 +313,7 @@ def correlator_node(state: AgentState):
         cross_mode_filter = Filter(
             must_not=[FieldCondition(key="mode", match=MatchValue(value=mode))]
         )
-        cross_results = client.search(
+        cross_results = get_qdrant_client().search(
             collection_name=COLLECTION_NAME,
             query_vector=query_vector,
             limit=3,
@@ -456,7 +470,7 @@ def archiver_node(state: AgentState):
 
     try:
         vectorstore = Qdrant(
-            client=client,
+            client=get_qdrant_client(),
             collection_name=COLLECTION_NAME,
             embeddings=embeddings
         )
