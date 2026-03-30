@@ -7,7 +7,7 @@
   <meta name="description" content="GlobalSentry: A unified multi-agent RAG ecosystem for early epidemic detection, climate disaster prediction, and supply chain transparency. Addressing SDGs 3, 11, 12, and 13." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -54,6 +54,11 @@
        HERO SECTION
   ═══════════════════════════════════════════ -->
   <section class="hero" id="hero">
+    <div class="hero-blobs">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+    </div>
     <div class="hero-grid-bg"></div>
     <div class="hero-particles" id="hero-particles"></div>
 
@@ -104,6 +109,35 @@
 
     <div class="hero-scroll-hint">
       <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       CORE CAPABILITIES SECTION (NEW)
+  ═══════════════════════════════════════════ -->
+  <section class="capabilities-section reveal" id="capabilities">
+    <div class="section-header">
+      <div class="section-label">Why It Works</div>
+      <h2 class="section-title">Core Technical Strengths</h2>
+      <p class="section-subtitle">Bridging the gap between raw data streams and actionable intelligence.</p>
+    </div>
+
+    <div class="capabilities-grid">
+      <div class="cap-card">
+        <div class="cap-icon">📡</div>
+        <h3 class="cap-title">Real-Time Ingestion</h3>
+        <p class="cap-desc">Continuous monitoring of satellite, seismic, and WHO data streams via sub-second socket connections.</p>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon">🧠</div>
+        <h3 class="cap-title">RAG-Powered Memory</h3>
+        <p class="cap-desc">Historical context retrieved instantly from vector databases to prevent alert duplication and boost accuracy.</p>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon">🤖</div>
+        <h3 class="cap-title">Autonomous Agents</h3>
+        <p class="cap-desc">Multi-agent LangGraph workflow handles triage, analysis, and validation independently before emitting alerts.</p>
+      </div>
     </div>
   </section>
 

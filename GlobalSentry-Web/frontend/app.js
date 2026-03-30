@@ -672,6 +672,23 @@ function initCounterObserver() {
   obs.observe(statsEl);
 }
 
+// ─── Intersection Observer for reveal animations ────────────────────────────
+function initRevealObserver() {
+  const reveals = document.querySelectorAll('.reveal');
+  if (!reveals.length) return;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+  reveals.forEach(el => obs.observe(el));
+}
+
 // ─── Toast notifications ────────────────────────────────────────────────────
 function showToast(message, type = 'info') {
   const container = document.getElementById('toast-container');
@@ -707,6 +724,7 @@ document.addEventListener('DOMContentLoaded', () => {
   createParticles();
   initNavbarScroll();
   initCounterObserver();
+  initRevealObserver();
   startStatusClock();
   updateMiniStats();
 
