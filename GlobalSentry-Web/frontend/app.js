@@ -520,6 +520,7 @@ function formatTimeAgo(date) {
   return date.toLocaleDateString();
 }
 
+
 // ─── Initialize App ─────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   // Set initial body mode class
