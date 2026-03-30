@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlobalSentry — Intelligence Platform</title>
+  <meta name="description" content="GlobalSentry: A unified multi-agent RAG ecosystem for early epidemic detection, climate disaster prediction, and supply chain transparency. Addressing SDGs 3, 11, 12, and 13." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       NAVIGATION BAR
+  ═══════════════════════════════════════════ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <div class="nav-logo">
+          <span class="logo-icon">🛡️</span>
+          <span class="logo-text">Global<span class="accent">Sentry</span></span>
+        </div>
+        <div class="nav-tagline">From watching to acting and remembering.</div>
+      </div>
+
+      <div class="nav-modes">
+        <button class="nav-mode-btn" id="nav-btn-epi" data-mode="epi" onclick="switchMode('epi')">
+          <span class="mode-icon">🩺</span> Epi-Sentry
+        </button>
+        <button class="nav-mode-btn active" id="nav-btn-eco" data-mode="eco" onclick="switchMode('eco')">
+          <span class="mode-icon">🌪️</span> Eco-Sentry
+        </button>
+        <button class="nav-mode-btn" id="nav-btn-supply" data-mode="supply" onclick="switchMode('supply')">
+          <span class="mode-icon">♻️</span> Supply-Sentry
+        </button>
+      </div>
+
+      <div class="nav-right">
+        <div class="live-indicator" id="live-indicator">
+          <div class="live-dot"></div>
+          <span>LIVE MONITORING</span>
+        </div>
+        <button class="btn-primary btn-sm" id="btn-launch-dashboard" onclick="scrollToDashboard()">
+          Launch Dashboard ↓
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       HERO SECTION
+  ═══════════════════════════════════════════ -->
+  <section class="hero" id="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-particles" id="hero-particles"></div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span>🌐 SDG 3 · 11 · 12 · 13</span>
+      </div>
+      <h1 class="hero-title">
+        From <span class="gradient-text">Watching</span><br />
+        to <span class="gradient-text-2">Acting</span>
+      </h1>
+      <p class="hero-subtitle">
+        GlobalSentry is a unified Multi-Agent RAG ecosystem that detects converging global crises —
+        epidemics, climate disasters, and supply chain failures — before they make headlines.
+      </p>
+
+      <div class="hero-ctas">
+        <button class="btn-primary btn-lg" id="btn-hero-dashboard" onclick="scrollToDashboard()">
+          View Live Dashboard
+        </button>
+        <button class="btn-ghost btn-lg" id="btn-hero-learn" onclick="scrollToSection('pillars')">
+          Explore Sentries ↓
+        </button>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-number" id="stat-threats" data-target="1247">0</div>
+          <div class="stat-label">Threats Detected</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-card">
+          <div class="stat-number" id="stat-countries" data-target="94">0</div>
+          <div class="stat-label">Countries Monitored</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-card">
+          <div class="stat-number" id="stat-accuracy" data-target="96">0</div>
+          <div class="stat-label">Accuracy %</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-card">
+          <div class="stat-number" id="stat-uptime" data-target="99">0</div>
+          <div class="stat-label">Uptime %</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       THREE SDG PILLARS
+  ═══════════════════════════════════════════ -->
+  <section class="pillars-section" id="pillars">
+    <div class="section-header">
+      <div class="section-label">Our Three Sentries</div>
+      <h2 class="section-title">Protecting People, Planet &amp; Prosperity</h2>
+      <p class="section-subtitle">Each sentry maps directly to UN Sustainable Development Goals, delivering targeted intelligence where it matters most.</p>
+    </div>
+
+    <div class="pillars-grid">
+
+      <!-- EPI SENTRY -->
+      <div class="pillar-card pillar-epi" id="card-epi">
+        <div class="pillar-glow glow-epi"></div>
+        <div class="pillar-icon">🩺</div>
+        <div class="pillar-sdg-badge">SDG 3</div>
+        <h3 class="pillar-title">Epi-Sentry</h3>
+        <p class="pillar-desc">
+          Early epidemic detection from WHO alerts, ProMED reports, and health blogs. Identifies outbreak clusters before they reach mainstream news.
+        </p>
+        <ul class="pillar-features">
+          <li>✓ WHO &amp; ProMED feed monitoring</li>
+          <li>✓ R₀ pattern analysis via RAG</li>
+          <li>✓ Cross-border spread modeling</li>
+          <li>✓ Pathogen similarity matching</li>
+        </ul>
+        <div class="pillar-footer">
+          <div class="pillar-stat"><span class="pillar-stat-num epi-color">312</span> active alerts</div>
+          <button class="btn-pillar btn-pillar-epi" id="btn-explore-epi" onclick="switchModeAndScroll('epi')">
+            Monitor Now →
+          </button>
+        </div>
+      </div>
+
+      <!-- ECO SENTRY -->
+      <div class="pillar-card pillar-eco pillar-featured" id="card-eco">
+        <div class="pillar-glow glow-eco"></div>
+        <div class="pillar-badge-featured">MOST ACTIVE</div>
+        <div class="pillar-icon">🌪️</div>
+        <div class="pillar-sdg-badge">SDG 11 · 13</div>
+        <h3 class="pillar-title">Eco-Sentry</h3>
+        <p class="pillar-desc">
+          Climate disaster prediction from meteorological and seismic data. Alerts governments and disaster teams 72+ hours before impact.
+        </p>
+        <ul class="pillar-features">
+          <li>✓ NOAA &amp; USGS real-time feeds</li>
+          <li>✓ Seismic pattern recognition</li>
+          <li>✓ Cyclone track modeling</li>
+          <li>✓ Wildfire risk indexing</li>
+        </ul>
+        <div class="pillar-footer">
+          <div class="pillar-stat"><span class="pillar-stat-num eco-color">489</span> active alerts</div>
+          <button class="btn-pillar btn-pillar-eco" id="btn-explore-eco" onclick="switchModeAndScroll('eco')">
+            Monitor Now →
+          </button>
+        </div>
+      </div>
+
+      <!-- SUPPLY SENTRY -->
+      <div class="pillar-card pillar-supply" id="card-supply">
+        <div class="pillar-glow glow-supply"></div>
+        <div class="pillar-icon">♻️</div>
+        <div class="pillar-sdg-badge">SDG 12</div>
+        <h3 class="pillar-title">Supply-Sentry</h3>
+        <p class="pillar-desc">
+          Supply chain transparency via ESG reports and whistleblower data. Detects disruptions, violations, and shortages before they cascade.
+        </p>
+        <ul class="pillar-features">
+          <li>✓ ESG report analysis</li>
+          <li>✓ Whistleblower signal processing</li>
+          <li>✓ Trade route risk mapping</li>
+          <li>✓ Tier-2 supplier visibility</li>
+        </ul>
+        <div class="pillar-footer">
+          <div class="pillar-stat"><span class="pillar-stat-num supply-color">198</span> active alerts</div>
+          <button class="btn-pillar btn-pillar-supply" id="btn-explore-supply" onclick="switchModeAndScroll('supply')">
+            Monitor Now →
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       LIVE INTELLIGENCE DASHBOARD
+  ═══════════════════════════════════════════ -->
+  <section class="dashboard-section" id="dashboard">
+    <div class="section-header">
+      <div class="section-label" id="dashboard-mode-label">🌪️ ECO-SENTRY MODE</div>
+      <h2 class="section-title">Live Intelligence Dashboard</h2>
+      <p class="section-subtitle">Real-time threat feed powered by Multi-Agent LangGraph pipeline with RAG memory.</p>
+    </div>
+
+    <!-- Mode Toggle Bar -->
+    <div class="mode-toggle-bar" id="mode-toggle-bar">
+      <button class="mode-toggle-btn" id="btn-mode-epi" data-mode="epi" onclick="switchMode('epi')">
+        <span class="mode-btn-icon">🩺</span>
+        <span class="mode-btn-label">Epi-Sentry</span>
+        <span class="mode-btn-sdg">SDG 3</span>
+        <div class="mode-btn-indicator epi-bg"></div>
+      </button>
+      <button class="mode-toggle-btn active" id="btn-mode-eco" data-mode="eco" onclick="switchMode('eco')">
+        <span class="mode-btn-icon">🌪️</span>
+        <span class="mode-btn-label">Eco-Sentry</span>
+        <span class="mode-btn-sdg">SDG 11·13</span>
+        <div class="mode-btn-indicator eco-bg"></div>
+      </button>
+      <button class="mode-toggle-btn" id="btn-mode-supply" data-mode="supply" onclick="switchMode('supply')">
+        <span class="mode-btn-icon">♻️</span>
+        <span class="mode-btn-label">Supply-Sentry</span>
+        <span class="mode-btn-sdg">SDG 12</span>
+        <div class="mode-btn-indicator supply-bg"></div>
+      </button>
+    </div>
+
+    <div class="dashboard-layout">
+
+      <!-- LEFT: Alert Feed -->
+      <div class="dashboard-main">
+
+        <!-- Convergence Warning Panel -->
+        <div class="convergence-panel" id="convergence-panel" style="display:none;">
+          <div class="convergence-icon">⚡</div>
+          <div class="convergence-content">
+            <div class="convergence-title">CROSS-MODE CONVERGENCE DETECTED</div>
+            <div class="convergence-text" id="convergence-text">Multiple sentry modes detected overlapping threat signals — compound risk elevated.</div>
+          </div>
+          <button class="convergence-close" id="btn-convergence-close" onclick="closeConvergence()">✕</button>
+        </div>
+
+        <!-- Alert Feed Header -->
+        <div class="feed-header">
+          <h3 class="feed-title" id="feed-title">🌪️ Climate &amp; Disaster Alerts</h3>
+          <div class="feed-controls">
+            <button class="btn-icon" id="btn-refresh-feed" onclick="refreshFeed()" title="Refresh alerts">
+              <span class="btn-icon-sym">↻</span> Refresh
+            </button>
+            <button class="btn-icon btn-danger-icon" id="btn-clear-feed" onclick="clearFeed()" title="Clear feed">
+              <span class="btn-icon-sym">✕</span> Clear
+            </button>
+          </div>
+        </div>
+
+        <!-- Alerts Container -->
+        <div class="alerts-container" id="alerts-container">
+          <div class="alert-loading" id="alert-loading">
+            <div class="spinner"></div>
+            <span>Fetching intelligence...</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT SIDEBAR -->
+      <div class="dashboard-sidebar">
+
+        <!-- Live Trigger Input -->
+        <div class="sidebar-card trigger-card">
+          <h4 class="sidebar-card-title">🎯 Live Demo Trigger</h4>
+          <p class="sidebar-card-desc">Submit a custom headline and watch the AI pipeline analyze it in real time.</p>
+          <textarea
+            class="trigger-input"
+            id="trigger-input"
+            placeholder="e.g. New respiratory illness cluster confirmed in Southeast Asia — WHO monitoring"
+            rows="3"
+          ></textarea>
+          <button class="btn-primary btn-trigger" id="btn-trigger-analysis" onclick="triggerAnalysis()">
+            ⚡ Trigger Analysis
+          </button>
+          <div class="trigger-status" id="trigger-status" style="display:none;"></div>
+        </div>
+
+        <!-- System Status -->
+        <div class="sidebar-card status-card">
+          <h4 class="sidebar-card-title">📡 System Status</h4>
+          <div class="status-rows">
+            <div class="status-row">
+              <span class="status-label">Active Mode</span>
+              <span class="status-value mode-badge" id="sidebar-mode-badge">ECO</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Feed Health</span>
+              <span class="status-value status-ok">● All Feeds OK</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Last Poll</span>
+              <span class="status-value" id="status-last-poll">Just now</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Uptime</span>
+              <span class="status-value status-ok">99.7%</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Memory (RAG)</span>
+              <span class="status-value" id="status-memory">Loading...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="sidebar-card stats-card">
+          <h4 class="sidebar-card-title">📊 Mode Stats</h4>
+          <div class="mini-stats" id="mini-stats">
+            <div class="mini-stat"><div class="mini-stat-val epi-color" id="mini-epi">4</div><div class="mini-stat-label">🩺 Epi</div></div>
+            <div class="mini-stat"><div class="mini-stat-val eco-color" id="mini-eco">4</div><div class="mini-stat-label">🌪️ Eco</div></div>
+            <div class="mini-stat"><div class="mini-stat-val supply-color" id="mini-supply">4</div><div class="mini-stat-label">♻️ Supply</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       AI PIPELINE VISUALIZER
+  ═══════════════════════════════════════════ -->
+  <section class="pipeline-section" id="pipeline">
+    <div class="section-header">
+      <div class="section-label">LangGraph Architecture</div>
+      <h2 class="section-title">AI Agent Pipeline</h2>
+      <p class="section-subtitle">Seven specialized nodes working in sequence to triage, analyze, verify, and archive every threat signal.</p>
+    </div>
+
+    <div class="pipeline-container">
+      <div class="pipeline-nodes" id="pipeline-nodes">
+        <div class="pipeline-node" id="pnode-ingest" data-step="0">
+          <div class="pnode-icon">📥</div>
+          <div class="pnode-label">Ingest &amp;<br/>Profiler</div>
+          <div class="pnode-desc">Mode-aware noise filtering</div>
+          <div class="pnode-time" id="ptime-0"></div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-retriever" data-step="1">
+          <div class="pnode-icon">🗃️</div>
+          <div class="pnode-label">Retriever<br/>(RAG)</div>
+          <div class="pnode-desc">Qdrant historical search</div>
+          <div class="pnode-time" id="ptime-1"></div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-triage" data-step="2">
+          <div class="pnode-icon">⚡</div>
+          <div class="pnode-label">Agent A<br/>Triage</div>
+          <div class="pnode-desc">Flash LLM threat filter</div>
+          <div class="pnode-time" id="ptime-2"></div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-analyst" data-step="3">
+          <div class="pnode-icon">🧠</div>
+          <div class="pnode-label">Agent B<br/>Analyst</div>
+          <div class="pnode-desc">Deep reasoning engine</div>
+          <div class="pnode-time" id="ptime-3"></div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-validator" data-step="4">
+          <div class="pnode-icon">🔍</div>
+          <div class="pnode-label">Agent C<br/>Validator</div>
+          <div class="pnode-desc">Web fact-checking</div>
+          <div class="pnode-time" id="ptime-4"></div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-notify" data-step="5">
+          <div class="pnode-icon">📣</div>
+          <div class="pnode-label">Notify<br/>(Telegram)</div>
+          <div class="pnode-desc">Stakeholder alerts</div>
+          <div class="pnode-time" id="ptime-5"></div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-archive" data-step="6">
+          <div class="pnode-icon">💾</div>
+          <div class="pnode-label">Archive<br/>(Qdrant)</div>
+          <div class="pnode-desc">RAG memory storage</div>
+          <div class="pnode-time" id="ptime-6"></div>
+        </div>
+      </div>
+
+      <div class="pipeline-demo">
+        <button class="btn-primary btn-pipeline-run" id="btn-run-pipeline" onclick="runPipelineDemo()">
+          ▶ Run Pipeline Demo
+        </button>
+        <div class="pipeline-progress" id="pipeline-progress" style="display:none;">
+          <div class="pipeline-progress-bar" id="pipeline-progress-bar"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════ -->
+  <footer class="footer" id="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="footer-logo">🛡️ Global<span class="accent">Sentry</span></div>
+        <div class="footer-tagline">Moving from a system that simply watches, to a system that acts and remembers.</div>
+        <div class="footer-sdgs">
+          <span class="sdg-badge sdg-3">SDG 3 — Good Health</span>
+          <span class="sdg-badge sdg-11">SDG 11 — Sustainable Cities</span>
+          <span class="sdg-badge sdg-12">SDG 12 — Responsible Consumption</span>
+          <span class="sdg-badge sdg-13">SDG 13 — Climate Action</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <div class="footer-col-title">Sentries</div>
+          <button class="footer-link" onclick="switchModeAndScroll('epi')">🩺 Epi-Sentry</button>
+          <button class="footer-link" onclick="switchModeAndScroll('eco')">🌪️ Eco-Sentry</button>
+          <button class="footer-link" onclick="switchModeAndScroll('supply')">♻️ Supply-Sentry</button>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Platform</div>
+          <button class="footer-link" onclick="scrollToSection('dashboard')">Dashboard</button>
+          <button class="footer-link" onclick="scrollToSection('pipeline')">AI Pipeline</button>
+
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">API</div>
+          <a class="footer-link" href="http://localhost:8000/docs" target="_blank">API Docs</a>
+          <a class="footer-link" href="http://localhost:8000/alerts" target="_blank">GET /alerts</a>
+          <a class="footer-link" href="http://localhost:8000/status" target="_blank">GET /status</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 GlobalSentry — HackXtreme Submission</span>
+      <span class="footer-bottom-right">Built with ❤️ for a safer world</span>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════
+       ALERT DETAIL MODAL
+  ═══════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-overlay" style="display:none;" onclick="closeModal(event)">
+    <div class="modal" id="alert-modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Alert Details</h3>
+        <button class="modal-close" id="btn-close-modal" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notifications -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
