@@ -2,3 +2,11 @@ fastapi
 uvicorn[standard]
 pydantic
 python-dotenv
+langgraph
+langchain
+langchain-ollama
+langchain-community
+qdrant-client
+duckduckgo-search
+feedparser
+sentence-transformers
