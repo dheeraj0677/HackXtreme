@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlobalSentry — 3D Threat Globe</title>
+  <meta name="description" content="Interactive 3D globe visualization of global threats across Epidemic, Climate, and Supply Chain intelligence layers." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+  <script src="//cdn.jsdelivr.net/npm/globe.gl"></script>
+  <style>
+    /* ─── CSS Variables ─────────────────────────────────── */
+    :root {
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-display: 'Orbitron', 'Inter', sans-serif;
+      --epi: #f43f5e;
+      --eco: #f59e0b;
+      --supply: #10b981;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: #050810;
+      color: #e2e8f0;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ─── Top Bar ──────────────────────────────────────── */
+    .globe-topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: 56px;
+      background: rgba(5, 8, 16, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+
+    .globe-topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .globe-topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #e2e8f0;
+    }
+    .globe-topbar-brand .logo-icon { font-size: 1.3rem; }
+    .globe-topbar-brand .logo-text {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .globe-topbar-brand .accent { color: var(--eco); }
+
+    .globe-topbar-divider {
+      width: 1px;
+      height: 28px;
+      background: rgba(148, 163, 184, 0.15);
+    }
+
+    .globe-topbar-title {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      color: #818cf8;
+      text-transform: uppercase;
+    }
+
+    .globe-topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-back {
+      background: rgba(148, 163, 184, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      color: #94a3b8;
+      border-radius: 8px;
+      padding: 7px 16px;
+      font-size: 0.82rem;
+      font-family: var(--font-body);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-back:hover {
+      background: rgba(148, 163, 184, 0.2);
+      color: #e2e8f0;
+      border-color: rgba(148, 163, 184, 0.35);
+    }
+
+    .live-dot-globe {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      animation: pulse-glow 2s infinite;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.3); }
+    }
+
+    .live-text-globe {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: #64748b;
+    }
+
+    /* ─── Globe Container ─────────────────────────────── */
+    .globe-fullscreen {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    #globeViz {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ─── Floating Legend Panel ────────────────────────── */
+    .globe-legend {
+      position: fixed;
+      top: 76px;
+      left: 20px;
+      background: rgba(10, 14, 26, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      border-radius: 16px;
+      padding: 20px 22px;
+      z-index: 50;
+      min-width: 220px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .globe-legend-title {
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #818cf8;
+      margin-bottom: 16px;
+    }
+    .globe-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .globe-legend-item:hover { opacity: 0.8; }
+    .globe-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .globe-legend-dot[data-mode="epi"] { background: var(--epi); box-shadow: 0 0 10px var(--epi); }
+    .globe-legend-dot[data-mode="eco"] { background: var(--eco); box-shadow: 0 0 10px var(--eco); }
+    .globe-legend-dot[data-mode="supply"] { background: var(--supply); box-shadow: 0 0 10px var(--supply); }
+    .globe-legend-dot-ring {
+      background: transparent !important;
+      border: 2px solid rgba(248, 113, 113, 0.8);
+      box-shadow: 0 0 12px rgba(248, 113, 113, 0.4), inset 0 0 4px rgba(248, 113, 113, 0.2) !important;
+      animation: ring-pulse-legend 2s infinite;
+    }
+    @keyframes ring-pulse-legend {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.5; }
+    }
+    .globe-legend-label {
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      flex: 1;
+    }
+    .globe-legend-count {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #64748b;
+      min-width: 22px;
+      text-align: right;
+    }
+    .globe-legend-divider {
+      height: 1px;
+      background: rgba(148, 163, 184, 0.1);
+      margin: 10px 0;
+    }
+
+    /* ─── Filter Buttons ──────────────────────────────── */
+    .globe-filters {
+      position: fixed;
+      top: 76px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 50;
+    }
+    .globe-filter-btn {
+      background: rgba(10, 14, 26, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      border-radius: 12px;
+      padding: 12px 18px;
+      color: #94a3b8;
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 160px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+    .globe-filter-btn:hover { background: rgba(30, 41, 59, 0.9); color: #e2e8f0; }
+    .globe-filter-btn.active { color: #e2e8f0; }
+    .globe-filter-btn.active[data-mode="all"] { border-color: #818cf8; background: rgba(99,102,241,0.12); }
+    .globe-filter-btn.active[data-mode="epi"] { border-color: var(--epi); background: rgba(244,63,94,0.12); }
+    .globe-filter-btn.active[data-mode="eco"] { border-color: var(--eco); background: rgba(245,158,11,0.12); }
+    .globe-filter-btn.active[data-mode="supply"] { border-color: var(--supply); background: rgba(16,185,129,0.12); }
+
+    /* ─── Bottom Info Bar ─────────────────────────────── */
+    .globe-bottom-bar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      z-index: 50;
+      background: rgba(10, 14, 26, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 100px;
+      padding: 10px 28px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .globe-bottom-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+    .globe-bottom-item strong { color: #e2e8f0; font-weight: 600; }
+    .globe-bottom-divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(148, 163, 184, 0.15);
+    }
+    .globe-bottom-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ─── Globe Tooltip ──────────────────────────────── */
+    .globe-tooltip {
+      background: rgba(10, 14, 26, 0.95) !important;
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 14px;
+      padding: 16px 18px;
+      max-width: 340px;
+      font-family: var(--font-body);
+      pointer-events: none;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+    .globe-tooltip-headline {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .globe-tooltip-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .globe-tooltip-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .globe-tooltip-badge.epi { background: rgba(244,63,94,0.2); color: #f43f5e; }
+    .globe-tooltip-badge.eco { background: rgba(245,158,11,0.2); color: #f59e0b; }
+    .globe-tooltip-badge.supply { background: rgba(16,185,129,0.2); color: #10b981; }
+    .globe-tooltip-location { font-size: 0.72rem; color: #94a3b8; }
+
+    /* ─── Responsive ─────────────────────────────────── */
+    @media (max-width: 768px) {
+      .globe-legend { display: none; }
+      .globe-filters { top: auto; bottom: 80px; right: 10px; flex-direction: row; }
+      .globe-filter-btn { min-width: auto; padding: 8px 12px; font-size: 0.75rem; }
+      .globe-bottom-bar { padding: 8px 18px; gap: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ TOP BAR ═══ -->
+  <div class="globe-topbar">
+    <div class="globe-topbar-left">
+      <a class="globe-topbar-brand" href="/">
+        <span class="logo-icon">🛡️</span>
+        <span class="logo-text">Global<span class="accent">Sentry</span></span>
+      </a>
+      <div class="globe-topbar-divider"></div>
+      <div class="globe-topbar-title">🌐 3D Threat Globe</div>
+    </div>
+    <div class="globe-topbar-right">
+      <div class="live-dot-globe"></div>
+      <span class="live-text-globe">LIVE</span>
+      <a class="btn-back" href="/">← Dashboard</a>
+    </div>
+  </div>
+
+  <!-- ═══ GLOBE ═══ -->
+  <div class="globe-fullscreen">
+    <div id="globeViz"></div>
+  </div>
+
+  <!-- ═══ FLOATING LEGEND ═══ -->
+  <div class="globe-legend" id="globe-legend">
+    <div class="globe-legend-title">Threat Layers</div>
+    <div class="globe-legend-item" onclick="filterMode('epi')">
+      <span class="globe-legend-dot" data-mode="epi"></span>
+      <span class="globe-legend-label">🩺 Epi-Sentry</span>
+      <span class="globe-legend-count" id="globe-count-epi">0</span>
+    </div>
+    <div class="globe-legend-item" onclick="filterMode('eco')">
+      <span class="globe-legend-dot" data-mode="eco"></span>
+      <span class="globe-legend-label">🌪️ Eco-Sentry</span>
+      <span class="globe-legend-count" id="globe-count-eco">0</span>
+    </div>
+    <div class="globe-legend-item" onclick="filterMode('supply')">
+      <span class="globe-legend-dot" data-mode="supply"></span>
+      <span class="globe-legend-label">♻️ Supply-Sentry</span>
+      <span class="globe-legend-count" id="globe-count-supply">0</span>
+    </div>
+    <div class="globe-legend-divider"></div>
+    <div class="globe-legend-item">
+      <span class="globe-legend-dot globe-legend-dot-ring"></span>
+      <span class="globe-legend-label">Critical (Sev 4-5)</span>
+    </div>
+  </div>
+
+  <!-- ═══ MODE FILTER BUTTONS ═══ -->
+  <div class="globe-filters" id="globe-filters">
+    <button class="globe-filter-btn active" data-mode="all" onclick="filterMode('all')">🌍 All Threats</button>
+    <button class="globe-filter-btn" data-mode="epi" onclick="filterMode('epi')">🩺 Epi-Sentry</button>
+    <button class="globe-filter-btn" data-mode="eco" onclick="filterMode('eco')">🌪️ Eco-Sentry</button>
+    <button class="globe-filter-btn" data-mode="supply" onclick="filterMode('supply')">♻️ Supply-Sentry</button>
+  </div>
+
+  <!-- ═══ BOTTOM INFO BAR ═══ -->
+  <div class="globe-bottom-bar" id="globe-bottom-bar">
+    <div class="globe-bottom-item">
+      <span class="globe-bottom-dot" style="background: #818cf8; box-shadow: 0 0 8px #818cf8;"></span>
+      Monitoring: <strong id="globe-region-name">South Asia</strong>
+    </div>
+    <div class="globe-bottom-divider"></div>
+    <div class="globe-bottom-item">
+      🏛️ <strong id="globe-stakeholder-text">Government Planner</strong>
+    </div>
+    <div class="globe-bottom-divider"></div>
+    <div class="globe-bottom-item">
+      <span class="globe-bottom-dot" style="background: var(--epi);"></span> <span id="bottom-epi">0</span>
+      &nbsp;
+      <span class="globe-bottom-dot" style="background: var(--eco);"></span> <span id="bottom-eco">0</span>
+      &nbsp;
+      <span class="globe-bottom-dot" style="background: var(--supply);"></span> <span id="bottom-supply">0</span>
+      &nbsp;threats
+    </div>
+  </div>
+
+  <script>
+    // ─── Configuration ─────────────────────────────────
+    const API_BASE = 'http://localhost:8000/api';
+
+    const GLOBE_COLORS = {
+      epi: '#f43f5e',
+      eco: '#f59e0b',
+      supply: '#10b981',
+    };
+
+    let globeInstance = null;
+    let allThreats = [];
+    let activeFilter = 'all';
+
+    // ─── Initialize Globe ──────────────────────────────
+    function initGlobe() {
+      const container = document.getElementById('globeViz');
+      if (!container || typeof Globe === 'undefined') return;
+
+      const globe = Globe()(container)
+        .globeImageUrl('//cdn.jsdelivr.net/npm/three-globe/example/img/earth-night.jpg')
+        .bumpImageUrl('//cdn.jsdelivr.net/npm/three-globe/example/img/earth-topology.png')
+        .backgroundImageUrl('//cdn.jsdelivr.net/npm/three-globe/example/img/night-sky.png')
+        .showAtmosphere(true)
+        .atmosphereColor('#3a228a')
+        .atmosphereAltitude(0.25)
+        .width(container.offsetWidth)
+        .height(container.offsetHeight)
+        // Points layer
+        .pointAltitude(d => 0.01 + d.severity * 0.05)
+        .pointRadius(d => 0.35 + d.severity * 0.18)
+        .pointColor(d => GLOBE_COLORS[d.mode] || '#6366f1')
+        .pointLabel(d => buildTooltip(d))
+        .pointsMerge(false)
+        .onPointClick(d => {
+          if (d) showAlertPanel(d);
+        })
+        // Rings layer
+        .ringsData([])
+        .ringColor(() => t => `rgba(248,113,113,${1 - t})`)
+        .ringMaxRadius(4)
+        .ringPropagationSpeed(2)
+        .ringRepeatPeriod(1200);
+
+      // Focus on South Asia
+      globe.pointOfView({ lat: 22, lng: 78, altitude: 2.2 }, 1500);
+
+      // Auto-rotate
+      globe.controls().autoRotate = true;
+      globe.controls().autoRotateSpeed = 0.35;
+      globe.controls().enableZoom = true;
+
+      // Pause rotation on interaction
+      let idleTimer;
+      const pauseRotation = () => {
+        clearTimeout(idleTimer);
+        globe.controls().autoRotate = false;
+        idleTimer = setTimeout(() => { globe.controls().autoRotate = true; }, 8000);
+      };
+      container.addEventListener('mousedown', pauseRotation);
+      container.addEventListener('touchstart', pauseRotation);
+
+      globeInstance = globe;
+
+      // Handle resize
+      window.addEventListener('resize', () => {
+        globe.width(window.innerWidth).height(window.innerHeight);
+      });
+
+      loadThreats();
+      loadUserProfile();
+    }
+
+    // ─── Load Threats ──────────────────────────────────
+    async function loadThreats() {
+      try {
+        const resp = await fetch(`${API_BASE}/globe-threats`);
+        const data = await resp.json();
+        allThreats = data.threats || [];
+
+        if (data.region_focus) {
+          const el = document.getElementById('globe-region-name');
+          if (el) el.textContent = data.region_focus;
+        }
+      } catch {
+        allThreats = [];
+      }
+
+      applyFilter();
+      updateCounts();
+    }
+
+    // ─── Load User Profile ─────────────────────────────
+    async function loadUserProfile() {
+      try {
+        const resp = await fetch(`${API_BASE}/user-profile`);
+        const profile = await resp.json();
+
+        const stakeholderEl = document.getElementById('globe-stakeholder-text');
+        if (stakeholderEl && profile.stakeholder_type) {
+          stakeholderEl.textContent = profile.stakeholder_type.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+        }
+
+        const regionEl = document.getElementById('globe-region-name');
+        if (regionEl && profile.region_of_interest) {
+          regionEl.textContent = profile.region_of_interest;
+        }
+      } catch {}
+    }
+
+    // ─── Filter Mode ───────────────────────────────────
+    function filterMode(mode) {
+      activeFilter = mode;
+
+      // Update filter button states
+      document.querySelectorAll('.globe-filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+
+      applyFilter();
+    }
+
+    function applyFilter() {
+      if (!globeInstance) return;
+
+      const filtered = activeFilter === 'all'
+        ? allThreats
+        : allThreats.map(t => ({
+            ...t,
+            _dimmed: t.mode !== activeFilter,
+          }));
+
+      // Update points
+      globeInstance
+        .pointsData(activeFilter === 'all' ? allThreats : allThreats)
+        .pointColor(d => {
+          const color = GLOBE_COLORS[d.mode] || '#6366f1';
+          if (activeFilter !== 'all' && d.mode !== activeFilter) return color + '30';
+          return color;
+        })
+        .pointAltitude(d => {
+          if (activeFilter !== 'all' && d.mode !== activeFilter) return 0.005;
+          return 0.01 + d.severity * 0.05;
+        })
+        .pointRadius(d => {
+          if (activeFilter !== 'all' && d.mode !== activeFilter) return 0.15;
+          return 0.35 + d.severity * 0.18;
+        });
+
+      // Update rings
+      const critical = allThreats.filter(t =>
+        t.severity >= 4 && (activeFilter === 'all' || t.mode === activeFilter)
+      );
+      globeInstance.ringsData(critical);
+    }
+
+    // ─── Update Counts ─────────────────────────────────
+    function updateCounts() {
+      const epi = allThreats.filter(t => t.mode === 'epi').length;
+      const eco = allThreats.filter(t => t.mode === 'eco').length;
+      const supply = allThreats.filter(t => t.mode === 'supply').length;
+
+      // Legend counts
+      const ce = document.getElementById('globe-count-epi');
+      const cc = document.getElementById('globe-count-eco');
+      const cs = document.getElementById('globe-count-supply');
+      if (ce) ce.textContent = epi;
+      if (cc) cc.textContent = eco;
+      if (cs) cs.textContent = supply;
+
+      // Bottom bar counts
+      const be = document.getElementById('bottom-epi');
+      const bc = document.getElementById('bottom-eco');
+      const bs = document.getElementById('bottom-supply');
+      if (be) be.textContent = epi;
+      if (bc) bc.textContent = eco;
+      if (bs) bs.textContent = supply;
+    }
+
+    // ─── Build Tooltip ─────────────────────────────────
+    function buildTooltip(d) {
+      const color = GLOBE_COLORS[d.mode] || '#6366f1';
+      const sevDots = Array.from({ length: 5 }, (_, i) =>
+        `<span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:${
+          i < d.severity ? color : 'rgba(148,163,184,0.25)'
+        };"></span>`
+      ).join('');
+
+      return `
+        <div class="globe-tooltip">
+          <div class="globe-tooltip-headline">${d.headline || 'Unknown Threat'}</div>
+          <div class="globe-tooltip-meta">
+            <span class="globe-tooltip-badge ${d.mode}">${d.mode.toUpperCase()}</span>
+            <span class="globe-tooltip-location">📍 ${d.location || 'Unknown'}</span>
+          </div>
+          <div style="margin-top:8px; display:flex; align-items:center; gap:3px;">
+            ${sevDots}
+            <span style="color:#94a3b8; font-size:0.7rem; margin-left:6px;">Severity ${d.severity}/5</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // ─── Show Alert Panel (on click) ───────────────────
+    function showAlertPanel(d) {
+      // Fly to the clicked point
+      globeInstance.pointOfView({ lat: d.lat, lng: d.lng, altitude: 1.5 }, 1000);
+    }
+
+    // ─── Init ──────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', initGlobe);
+  </script>
+</body>
+</html>
