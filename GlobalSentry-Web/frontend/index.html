@@ -43,6 +43,7 @@
           <div class="live-dot"></div>
           <span>LIVE MONITORING</span>
         </div>
+        <a href="conveyor.html" class="btn-ghost btn-sm" style="margin-right: 15px; text-decoration: none;">Live Scanner →</a>
         <button class="btn-primary btn-sm" id="btn-launch-dashboard" onclick="scrollToDashboard()">
           Launch Dashboard ↓
         </button>
@@ -297,20 +298,17 @@
       <!-- RIGHT SIDEBAR -->
       <div class="dashboard-sidebar">
 
-        <!-- Live Trigger Input -->
-        <div class="sidebar-card trigger-card">
-          <h4 class="sidebar-card-title">🎯 Live Demo Trigger</h4>
-          <p class="sidebar-card-desc">Submit a custom headline and watch the AI pipeline analyze it in real time.</p>
-          <textarea
-            class="trigger-input"
-            id="trigger-input"
-            placeholder="e.g. New respiratory illness cluster confirmed in Southeast Asia — WHO monitoring"
-            rows="3"
-          ></textarea>
-          <button class="btn-primary btn-trigger" id="btn-trigger-analysis" onclick="triggerAnalysis()">
-            ⚡ Trigger Analysis
-          </button>
-          <div class="trigger-status" id="trigger-status" style="display:none;"></div>
+        <!-- Autonomous Agent Status -->
+        <div class="sidebar-card trigger-card" id="autonomous-card">
+          <h4 class="sidebar-card-title">🤖 Agent Execution</h4>
+          <p class="sidebar-card-desc">The AI is autonomously scanning RSS feeds 24/7. Currently analyzing:</p>
+          <div id="current-analysis-display" class="current-analysis-box">
+            <em>Waiting for next signal...</em>
+          </div>
+          <div class="active-node-indicator" id="active-node-indicator">
+            <span class="pulse-dot"></span> 
+            <span id="active-node-text">Idling (Waiting 20s)</span>
+          </div>
         </div>
 
         <!-- System Status -->
@@ -361,67 +359,81 @@
     <div class="section-header">
       <div class="section-label">LangGraph Architecture</div>
       <h2 class="section-title">AI Agent Pipeline</h2>
-      <p class="section-subtitle">Seven specialized nodes working in sequence to triage, analyze, verify, and archive every threat signal.</p>
+      <p class="section-subtitle">Nine specialized nodes working in sequence — with a self-correcting reflection loop — to triage, analyze, correlate, verify, and archive every threat signal.</p>
     </div>
 
     <div class="pipeline-container">
-      <div class="pipeline-nodes" id="pipeline-nodes">
-        <div class="pipeline-node" id="pnode-ingest" data-step="0">
+      <div class="pipeline-nodes" id="pipeline-nodes" style="position: relative;">
+        <!-- Live Data Tracker Pill -->
+        <div class="data-tracker-pill" id="data-tracker-pill" style="opacity: 0;">Evaluating Data...</div>
+        
+        <div class="pipeline-node" id="pnode-profiler" data-step="0">
           <div class="pnode-icon">📥</div>
-          <div class="pnode-label">Ingest &amp;<br/>Profiler</div>
-          <div class="pnode-desc">Mode-aware noise filtering</div>
+          <div class="pnode-label">Profiler</div>
+          <div class="pnode-desc">Stakeholder relevance scoring</div>
           <div class="pnode-time" id="ptime-0"></div>
         </div>
         <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node" id="pnode-retriever" data-step="1">
-          <div class="pnode-icon">🗃️</div>
-          <div class="pnode-label">Retriever<br/>(RAG)</div>
-          <div class="pnode-desc">Qdrant historical search</div>
+        <div class="pipeline-node" id="pnode-triage" data-step="1">
+          <div class="pnode-icon">⚡</div>
+          <div class="pnode-label">Agent A<br/>Triage</div>
+          <div class="pnode-desc">Flash YES/NO threat gate</div>
           <div class="pnode-time" id="ptime-1"></div>
         </div>
         <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node" id="pnode-triage" data-step="2">
-          <div class="pnode-icon">⚡</div>
-          <div class="pnode-label">Agent A<br/>Triage</div>
-          <div class="pnode-desc">Flash LLM threat filter</div>
+        <div class="pipeline-node" id="pnode-retriever" data-step="2">
+          <div class="pnode-icon">🗃️</div>
+          <div class="pnode-label">Retriever<br/>(RAG)</div>
+          <div class="pnode-desc">Qdrant same-mode lookup</div>
           <div class="pnode-time" id="ptime-2"></div>
         </div>
         <div class="pipeline-arrow">→</div>
         <div class="pipeline-node" id="pnode-analyst" data-step="3">
           <div class="pnode-icon">🧠</div>
           <div class="pnode-label">Agent B<br/>Analyst</div>
-          <div class="pnode-desc">Deep reasoning engine</div>
+          <div class="pnode-desc">Deep domain analysis</div>
           <div class="pnode-time" id="ptime-3"></div>
         </div>
         <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node" id="pnode-validator" data-step="4">
-          <div class="pnode-icon">🔍</div>
-          <div class="pnode-label">Agent C<br/>Validator</div>
-          <div class="pnode-desc">Web fact-checking</div>
+        <div class="pipeline-node" id="pnode-correlator" data-step="4">
+          <div class="pnode-icon">🔗</div>
+          <div class="pnode-label">Neural<br/>Moat</div>
+          <div class="pnode-desc">Cross-mode correlation</div>
           <div class="pnode-time" id="ptime-4"></div>
         </div>
         <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node" id="pnode-notify" data-step="5">
-          <div class="pnode-icon">📣</div>
-          <div class="pnode-label">Notify<br/>(Telegram)</div>
-          <div class="pnode-desc">Stakeholder alerts</div>
+        <div class="pipeline-node" id="pnode-validator" data-step="5">
+          <div class="pnode-icon">🔍</div>
+          <div class="pnode-label">Agent C<br/>Validator</div>
+          <div class="pnode-desc">DuckDuckGo fact-check</div>
           <div class="pnode-time" id="ptime-5"></div>
         </div>
         <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node" id="pnode-archive" data-step="6">
+        <div class="pipeline-node" id="pnode-reflect" data-step="6">
+          <div class="pnode-icon">🔁</div>
+          <div class="pnode-label">Reflection<br/>Loop</div>
+          <div class="pnode-desc">Self-correct if unverified</div>
+          <div class="pnode-time" id="ptime-6"></div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-notify" data-step="7">
+          <div class="pnode-icon">📣</div>
+          <div class="pnode-label">Notify<br/>(Telegram)</div>
+          <div class="pnode-desc">Stakeholder alerts</div>
+          <div class="pnode-time" id="ptime-7"></div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-archive" data-step="8">
           <div class="pnode-icon">💾</div>
           <div class="pnode-label">Archive<br/>(Qdrant)</div>
           <div class="pnode-desc">RAG memory storage</div>
-          <div class="pnode-time" id="ptime-6"></div>
+          <div class="pnode-time" id="ptime-8"></div>
         </div>
       </div>
 
       <div class="pipeline-demo">
-        <button class="btn-primary btn-pipeline-run" id="btn-run-pipeline" onclick="runPipelineDemo()">
-          ▶ Run Pipeline Demo
-        </button>
-        <div class="pipeline-progress" id="pipeline-progress" style="display:none;">
-          <div class="pipeline-progress-bar" id="pipeline-progress-bar"></div>
+        <div class="pipeline-status-text" id="pipeline-status-text">
+          Pipeline is currently listening for new threats...
         </div>
       </div>
     </div>

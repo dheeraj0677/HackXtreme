@@ -7,129 +7,11 @@
 const API_BASE = 'http://localhost:8000/api';
 const USE_API  = true; // FastAPI is running at localhost:8000 with /api/ prefix
 
-// ─── Mock Alert Data (used when API is offline) ─────────────────────────────
-const MOCK_ALERTS = {
-  epi: [
-    {
-      id: 'epi-1',
-      headline: 'Unusual pneumonia cluster detected in Southeast Asia — WHO investigating',
-      mode: 'epi', severity: 4, confidence: 0.87, is_verified: true,
-      source: 'WHO Situation Report',
-      timestamp: new Date(Date.now() - 12 * 60000).toISOString(),
-      analysis: 'Pattern consistent with novel respiratory pathogen. Hospitalization rate 3× baseline. Immediate surveillance escalation recommended. Cross-border air travel vectors identified.',
-      convergence_warning: null,
-    },
-    {
-      id: 'epi-2',
-      headline: 'New drug-resistant TB strain reported across 5 countries',
-      mode: 'epi', severity: 3, confidence: 0.79, is_verified: true,
-      source: 'ProMED-mail',
-      timestamp: new Date(Date.now() - 64 * 60000).toISOString(),
-      analysis: 'MDR-TB genotype confirmed via laboratory sequencing. Cross-border travel patterns suggest rapid spread vector through Central Asia corridor.',
-      convergence_warning: '⚡ ECO-LINK: Flood displacement camps in the same region may accelerate exposure rates.',
-    },
-    {
-      id: 'epi-3',
-      headline: 'Dengue fever outbreaks spike in South America — 40% above seasonal average',
-      mode: 'epi', severity: 2, confidence: 0.92, is_verified: true,
-      source: 'PAHO/WHO',
-      timestamp: new Date(Date.now() - 180 * 60000).toISOString(),
-      analysis: 'Vector proliferation linked to increased standing water from irregular rainfall. Urban centers at highest risk. Aedes aegypti density 40% above seasonal baseline.',
-      convergence_warning: null,
-    },
-    {
-      id: 'epi-4',
-      headline: 'Unconfirmed viral hemorrhagic fever reports emerging from Central Africa',
-      mode: 'epi', severity: 5, confidence: 0.61, is_verified: false,
-      source: 'Social Media Signals',
-      timestamp: new Date(Date.now() - 38 * 60000).toISOString(),
-      analysis: 'Awaiting WHO ground-truth confirmation. Symptom pattern matches VHF profile. UNVERIFIED — monitor closely. Local health ministry denial on record.',
-      convergence_warning: null,
-    },
-  ],
-  eco: [
-    {
-      id: 'eco-1',
-      headline: 'Magnitude 6.8 earthquake strikes coastal Chile — tsunami advisory issued',
-      mode: 'eco', severity: 5, confidence: 0.97, is_verified: true,
-      source: 'USGS / NOAA',
-      timestamp: new Date(Date.now() - 5 * 60000).toISOString(),
-      analysis: 'Shallow-focus quake (depth 18km) maximizes surface impact. Coastal evacuation zones active. Aftershocks expected within 72 hours. Tsunami wave 0.5m detected at Juan Fernández.',
-      convergence_warning: '⚡ SUPPLY-LINK: Valparaíso port — major copper export hub — may face operational shutdown for 2–5 days.',
-    },
-    {
-      id: 'eco-2',
-      headline: 'Category 4 cyclone forming in Bay of Bengal — landfall predicted in 72hrs',
-      mode: 'eco', severity: 4, confidence: 0.89, is_verified: true,
-      source: 'IMD Cyclone Warning',
-      timestamp: new Date(Date.now() - 120 * 60000).toISOString(),
-      analysis: 'Track models show 85% probability of Odisha/Andhra landfall. Storm surge 3–5m above normal tide. 12M population in direct impact corridor. Evacuation orders issued for 6 coastal districts.',
-      convergence_warning: null,
-    },
-    {
-      id: 'eco-3',
-      headline: 'Mega-drought declaration issued for Western United States — 23-year low',
-      mode: 'eco', severity: 3, confidence: 0.95, is_verified: true,
-      source: 'US Bureau of Reclamation',
-      timestamp: new Date(Date.now() - 300 * 60000).toISOString(),
-      analysis: 'Lake Mead at 27% capacity. Hydroelectric output cut 40%. Agricultural water allocation suspended in 3 states. $8.7B economic impact projected for Q3.',
-      convergence_warning: '⚡ EPI-LINK: Water scarcity increasing vector-borne disease risk in urban centers across Nevada and Arizona.',
-    },
-    {
-      id: 'eco-4',
-      headline: 'Wildfire season begins 6 weeks early in Southern Europe — red alert issued',
-      mode: 'eco', severity: 3, confidence: 0.83, is_verified: true,
-      source: 'Copernicus EFFIS',
-      timestamp: new Date(Date.now() - 480 * 60000).toISOString(),
-      analysis: 'Unprecedented heat-drought combination. Fire weather index at extreme level across Portugal, Spain, Greece. 14,000 ha burned in first 48 hours of season.',
-      convergence_warning: null,
-    },
-  ],
-  supply: [
-    {
-      id: 'supply-1',
-      headline: 'Major TSMC fab halts production — global chip shortage feared',
-      mode: 'supply', severity: 5, confidence: 0.91, is_verified: true,
-      source: 'Reuters / SEC Filing',
-      timestamp: new Date(Date.now() - 22 * 60000).toISOString(),
-      analysis: 'Whistleblower report filed with SEC. 3nm fab line offline for minimum 2 weeks. Apple, NVIDIA, AMD tier-1 exposure confirmed. Q4 product launches at risk.',
-      convergence_warning: '⚡ ECO-LINK: Earthquake near Hsinchu triggered facility shutdown — compound convergence event confirmed.',
-    },
-    {
-      id: 'supply-2',
-      headline: 'Red Sea shipping lane disruption continues — Suez diversions spike 340%',
-      mode: 'supply', severity: 4, confidence: 0.96, is_verified: true,
-      source: 'Freightos Baltic Index',
-      timestamp: new Date(Date.now() - 60 * 60000).toISOString(),
-      analysis: 'Container shipping rates at 18-month high. Europe-Asia freight +22 days transit time. Energy, electronics, automotive sectors in critical impact zone. Daily loss estimate $12M.',
-      convergence_warning: null,
-    },
-    {
-      id: 'supply-3',
-      headline: 'Rare earth mining ban declared in Myanmar — EV battery chain at risk',
-      mode: 'supply', severity: 3, confidence: 0.78, is_verified: true,
-      source: 'Bloomberg Supply Chain Monitor',
-      timestamp: new Date(Date.now() - 240 * 60000).toISOString(),
-      analysis: 'Myanmar supplies 40% global rare earth output. Tesla, BYD, Volkswagen flagged in risk registry. 6-month buffer supply estimated before critical shortfall.',
-      convergence_warning: null,
-    },
-    {
-      id: 'supply-4',
-      headline: 'Anonymous ESG whistleblower alleges forced labor in smartphone supply chain',
-      mode: 'supply', severity: 2, confidence: 0.58, is_verified: false,
-      source: 'Whistleblower Platform',
-      timestamp: new Date(Date.now() - 360 * 60000).toISOString(),
-      analysis: 'Report under third-party audit review. Social compliance violations alleged at Tier-2 supplier in Shenzhen industrial zone. UNVERIFIED — pending independent investigation and corroboration.',
-      convergence_warning: null,
-    },
-  ],
-};
+// No mock data — all alerts come from live Indian RSS feeds and the AI agent pipeline.
 
-// ─── Application State ──────────────────────────────────────────────────────
 const state = {
   activeMode: 'eco',
-  triggeredAlerts: [],
-  isRunningPipeline: false,
+  alerts: [],
 };
 
 // ─── Mode Config ────────────────────────────────────────────────────────────
@@ -225,27 +107,21 @@ async function loadAlerts(mode) {
 
   let alerts = [];
 
-  if (USE_API) {
-    try {
-      const resp = await fetch(`${API_BASE}/alerts?mode=${mode}&limit=10`);
-      const data = await resp.json();
-      alerts = data.alerts || [];
-    } catch {
-      alerts = getLocalAlerts(mode);
+    if (USE_API) {
+      try {
+        const resp = await fetch(`${API_BASE}/alerts?mode=${mode}&limit=15`);
+        const data = await resp.json();
+        alerts = data.alerts || [];
+      } catch (e) {
+        console.warn('API error', e);
+      }
     }
-  } else {
-    alerts = getLocalAlerts(mode);
+    
+    state.alerts = alerts;
+    renderAlerts(alerts);
+    checkConvergence(alerts);
+    updateMiniStats();
   }
-
-  renderAlerts(alerts);
-  checkConvergence(alerts);
-  updateMiniStats();
-}
-
-function getLocalAlerts(mode) {
-  const triggered = state.triggeredAlerts.filter(a => a.mode === mode);
-  return [...triggered, ...MOCK_ALERTS[mode]];
-}
 
 function renderAlerts(alerts) {
   const container = document.getElementById('alerts-container');
@@ -264,36 +140,31 @@ function renderAlerts(alerts) {
 
 function buildAlertCard(alert, index) {
   const card = document.createElement('div');
-  card.className = `alert-card mode-${alert.mode} sev-${alert.severity} entering`;
+  const isRaw = alert.is_raw_feed || alert.severity === 0;
+  card.className = `alert-card mode-${alert.mode} ${isRaw ? 'sev-raw' : `sev-${alert.severity}`} entering`;
   card.style.animationDelay = `${index * 60}ms`;
   card.setAttribute('data-alert-id', alert.id);
 
-  const sevDots = buildSeverityDots(alert.severity, alert.mode);
   const modeBadgeClass = `badge-${alert.mode}`;
-  const vBadgeClass = alert.is_verified ? 'badge-verified' : 'badge-unverified';
-  const vText = alert.is_verified ? '✓ Verified' : '⚠ Unverified';
   const timeAgo = formatTimeAgo(new Date(alert.timestamp));
 
-  card.innerHTML = `
-    <div class="alert-card-top">
-      <div class="alert-headline">${escapeHtml(alert.headline)}</div>
-      <div class="alert-badges">
-        <span class="badge ${modeBadgeClass}">${alert.mode.toUpperCase()}</span>
-        <span class="badge ${vBadgeClass}">${vText}</span>
+  if (isRaw) {
+    // Raw RSS headline — not yet processed by AI agent
+    card.innerHTML = `
+      <div class="alert-card-top">
+        <div class="alert-headline">${escapeHtml(alert.headline)}</div>
+        <div class="alert-badges">
+          <span class="badge ${modeBadgeClass}">${alert.mode.toUpperCase()}</span>
+          <span class="badge badge-raw">📡 RSS FEED</span>
+        </div>
       </div>
-    </div>
-    <div class="alert-card-bottom">
-      <div class="alert-meta">
-        <div class="alert-severity">${sevDots}</div>
-        <span class="alert-source">${escapeHtml(alert.source)}</span>
-        <span class="alert-time">${timeAgo}</span>
-      </div>
-      <button class="alert-view-btn" id="btn-view-details-${alert.id}" onclick="openAlertModal('${alert.id}')">
-        View Details →
-      </button>
-    </div>
-    ${alert.convergence_warning ? `<div style="margin-top:10px;font-size:0.78rem;color:var(--eco);border-top:1px solid rgba(245,158,11,0.2);padding-top:8px;">${escapeHtml(alert.convergence_warning)}</div>` : ''}
-  `;
+      <div class="alert-card-bottom">
+        <div class="alert-meta">
+          <span class="alert-source">${escapeHtml(alert.source)}</span>
+          <span class="alert-time">${timeAgo}</span>
+        </div>
+    `;
+  }
 
   return card;
 }
@@ -340,175 +211,108 @@ function clearFeed() {
   showToast('Feed cleared', 'info');
 }
 
-// ─── Trigger Analysis ───────────────────────────────────────────────────────
-async function triggerAnalysis() {
-  const input  = document.getElementById('trigger-input');
-  const status = document.getElementById('trigger-status');
-  const btn    = document.getElementById('btn-trigger-analysis');
+// ─── Autonomous Agent Status UI ──────────────────────────────────────────────
+async function pollSystemStatus() {
+  if (!USE_API) return;
+  try {
+    const resp = await fetch(`${API_BASE}/status`);
+    const data = await resp.json();
+    updateAutonomousUI(data.current_analysis);
+  } catch (e) {
+    console.warn('Failed to poll status', e);
+  }
+}
 
-  const headline = input.value.trim();
-  if (!headline) {
-    showToast('Please enter a headline to analyze', 'error');
-    input.focus();
+function updateAutonomousUI(currentAnalysis) {
+  const display = document.getElementById('current-analysis-display');
+  const indText = document.getElementById('active-node-text');
+  const trackerPill = document.getElementById('data-tracker-pill');
+  
+  // reset pipeline visualizer
+  document.querySelectorAll('.pipeline-node').forEach(n => {
+    n.classList.remove('active', 'done');
+  });
+
+  if (!currentAnalysis) {
+    if (display) display.innerHTML = '<em>Waiting for next signal...</em>';
+    if (indText) indText.textContent = 'Idling (Waiting 20s)';
+    const pText = document.getElementById('pipeline-status-text');
+    if (pText) pText.textContent = "Pipeline is currently waiting to scan next threat data...";
+    if (trackerPill) trackerPill.style.opacity = '0';
     return;
   }
 
-  btn.disabled = true;
-  btn.textContent = '⏳ Analyzing...';
-  status.style.display = 'block';
-  status.className = 'trigger-status running';
-  status.textContent = '🔄 Running pipeline nodes...';
+  if (display) display.innerHTML = `<strong>[Mode: ${currentAnalysis.mode.toUpperCase()}]</strong> ${escapeHtml(currentAnalysis.headline)}`;
+  
+  const nodeNames = {
+    'profiler': 'Profiler',
+    'triage': 'Triage (Agent A)',
+    'retriever': 'Retriever (RAG)',
+    'analyst': 'Analyst (Agent B)',
+    'correlator': 'Correlator (Neural Moat)',
+    'validator': 'Validator (Agent C)',
+    'retry': 'Reflection Loop',
+    'notify': 'Notify',
+    'archiver': 'Archiver'
+  };
+  
+  const activeLabel = nodeNames[currentAnalysis.active_node] || currentAnalysis.active_node;
+  if (indText) indText.textContent = `Running: ${activeLabel}...`;
+  
+  const pText = document.getElementById('pipeline-status-text');
+  if (pText) pText.textContent = `Autonomous API streaming active: ${activeLabel}...`;
 
-  // Animate pipeline
-  await animatePipelineNodes();
+  // highlight active pipeline node
+  let isDonePhase = true;
+  const nodes = ['profiler', 'triage', 'retriever', 'analyst', 'correlator', 'validator', 'retry', 'notify', 'archiver'];
+  const nodeIds = {
+     'profiler': 'pnode-profiler',
+     'triage': 'pnode-triage',
+     'retriever': 'pnode-retriever',
+     'analyst': 'pnode-analyst',
+     'correlator': 'pnode-correlator',
+     'validator': 'pnode-validator',
+     'retry': 'pnode-reflect',
+     'notify': 'pnode-notify',
+     'archiver': 'pnode-archive'
+  };
 
-  let newAlert;
-  if (USE_API) {
-    try {
-      const resp = await fetch(`${API_BASE}/trigger`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ headline, mode: state.activeMode }),
-      });
-      const data = await resp.json();
-      newAlert = data.alert || buildMockTriggerAlert(headline);
-    } catch {
-      newAlert = buildMockTriggerAlert(headline);
+  const currentID = nodeIds[currentAnalysis.active_node];
+  nodes.forEach(n => {
+    const elId = nodeIds[n];
+    if (!elId) return;
+    const el = document.getElementById(elId);
+    if (!el) return;
+    
+    if (elId === currentID) {
+      el.classList.add('active');
+      isDonePhase = false;
+      
+      // Update tracker pill position
+      if (trackerPill) {
+        trackerPill.textContent = currentAnalysis.headline;
+        trackerPill.style.opacity = '1';
+        
+        // Calculate offset (center pill over active node)
+        const containerEl = document.getElementById('pipeline-nodes');
+        const containerRect = containerEl.getBoundingClientRect();
+        const nodeRect = el.getBoundingClientRect();
+        
+        // Calculate the center X of the node relative to the container
+        const leftPos = (nodeRect.left - containerRect.left) + (nodeRect.width / 2);
+        
+        // Use transform for smooth animation: translate to node center minus 50% of pill width
+        trackerPill.style.transform = `translateX(${leftPos}px) translateX(-50%)`;
+      }
+    } else if (isDonePhase) {
+      el.classList.add('done');
     }
-  } else {
-    await sleep(2200);
-    newAlert = buildMockTriggerAlert(headline);
-  }
-
-  state.triggeredAlerts.unshift(newAlert);
-
-  status.className = 'trigger-status success';
-  status.innerHTML = `✅ Analysis complete — Severity ${newAlert.severity}/5 | Confidence ${Math.round(newAlert.confidence * 100)}% | ${newAlert.is_verified ? '✓ Verified' : '⚠ Unverified'}`;
-
-  btn.disabled = false;
-  btn.textContent = '⚡ Trigger Analysis';
-
-  // Prepend to feed
-  const container = document.getElementById('alerts-container');
-  container.querySelectorAll('.alert-loading').forEach(el => el.remove());
-  const card = buildAlertCard(newAlert, 0);
-  card.style.animationDelay = '0ms';
-  container.prepend(card);
-
-  if (newAlert.convergence_warning) {
-    document.getElementById('convergence-text').textContent = newAlert.convergence_warning;
-    document.getElementById('convergence-panel').style.display = 'flex';
-  }
-
-  showToast(`Analysis complete: Severity ${newAlert.severity}/5`, 'success');
-  updateMiniStats();
-}
-
-function buildMockTriggerAlert(headline) {
-  const severity = Math.floor(Math.random() * 3) + 2;
-  const confidence = parseFloat((Math.random() * 0.3 + 0.65).toFixed(2));
-  const analyses = {
-    epi: `Epidemiological triage complete. Symptom pattern cross-matched with ${3 + Math.floor(Math.random() * 9)} historical outbreaks in Qdrant memory. R0 estimation initiated.`,
-    eco: `Geophysical risk model applied. Satellite data cross-referenced. Affected population zone estimated at ${50 + Math.floor(Math.random() * 450)}K residents.`,
-    supply: `Supply chain dependency graph queried. ${2 + Math.floor(Math.random() * 7)} Tier-1 suppliers identified in impact zone. ESG registry cross-checked.`,
-  };
-  return {
-    id: `triggered-${Date.now()}`,
-    headline,
-    mode: state.activeMode,
-    severity,
-    confidence,
-    is_verified: confidence > 0.75,
-    source: 'Live Demo — Manual Trigger',
-    timestamp: new Date().toISOString(),
-    analysis: analyses[state.activeMode],
-    convergence_warning: Math.random() > 0.55 ? '⚡ CONVERGENCE: Cross-mode pattern match detected in Qdrant memory.' : null,
-  };
-}
-
-// ─── Pipeline Visualizer ────────────────────────────────────────────────────
-const PIPELINE_STEPS = [
-  { id: 'pnode-ingest',    label: 'Ingest & Profiler', msRange: [120, 280] },
-  { id: 'pnode-retriever', label: 'Retriever (RAG)',   msRange: [200, 600] },
-  { id: 'pnode-triage',    label: 'Agent A — Triage',  msRange: [80, 200] },
-  { id: 'pnode-analyst',   label: 'Agent B — Analyst', msRange: [400, 1200] },
-  { id: 'pnode-validator', label: 'Agent C — Validator', msRange: [300, 800] },
-  { id: 'pnode-notify',    label: 'Notify',            msRange: [50, 150] },
-  { id: 'pnode-archive',   label: 'Archive',           msRange: [50, 150] },
-];
-
-async function runPipelineDemo() {
-  if (state.isRunningPipeline) return;
-  state.isRunningPipeline = true;
-
-  const btn = document.getElementById('btn-run-pipeline');
-  const progress = document.getElementById('pipeline-progress');
-  const bar = document.getElementById('pipeline-progress-bar');
-  btn.disabled = true;
-  btn.textContent = '⏳ Running...';
-  progress.style.display = 'block';
-
-  // Reset all nodes
-  PIPELINE_STEPS.forEach((step, i) => {
-    const node = document.getElementById(step.id);
-    if (node) { node.classList.remove('active', 'done'); }
-    const timeEl = document.getElementById(`ptime-${i}`);
-    if (timeEl) timeEl.textContent = '';
   });
-
-  for (let i = 0; i < PIPELINE_STEPS.length; i++) {
-    const step = PIPELINE_STEPS[i];
-    const node = document.getElementById(step.id);
-    const timeEl = document.getElementById(`ptime-${i}`);
-
-    if (node) { node.classList.add('active'); node.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
-
-    const ms = step.msRange[0] + Math.random() * (step.msRange[1] - step.msRange[0]);
-    await sleep(ms);
-
-    if (node) { node.classList.remove('active'); node.classList.add('done'); }
-    if (timeEl) timeEl.textContent = `${Math.round(ms)}ms ✓`;
-
-    bar.style.width = `${((i + 1) / PIPELINE_STEPS.length) * 100}%`;
-  }
-
-  btn.disabled = false;
-  btn.textContent = '▶ Run Pipeline Demo';
-  progress.style.display = 'none';
-  bar.style.width = '0%';
-  state.isRunningPipeline = false;
-
-  showToast('Pipeline demo complete!', 'success');
-
-  // Reset nodes after 3s
-  setTimeout(() => {
-    PIPELINE_STEPS.forEach(step => {
-      const node = document.getElementById(step.id);
-      if (node) node.classList.remove('done');
-    });
-  }, 3000);
-}
-
-async function animatePipelineNodes() {
-  // Scroll to pipeline and run it
-  const pSection = document.getElementById('pipeline');
-  if (pSection) pSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  await sleep(500);
-  await runPipelineDemo();
-  document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // ─── Alert Modal ────────────────────────────────────────────────────────────
 function openAlertModal(alertId) {
-  // Find alert in all data
-  let alert = null;
-  for (const mode of ['epi', 'eco', 'supply']) {
-    alert = MOCK_ALERTS[mode].find(a => a.id === alertId);
-    if (alert) break;
-  }
-  if (!alert) {
-    alert = state.triggeredAlerts.find(a => a.id === alertId);
-  }
+  const alert = state.alerts.find(a => a.id === alertId);
   if (!alert) return;
 
   const overlay = document.getElementById('modal-overlay');
@@ -575,20 +379,20 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
 
 // ─── Mini Stats ─────────────────────────────────────────────────────────────
 function updateMiniStats() {
-  const epiCount    = MOCK_ALERTS.epi.length + state.triggeredAlerts.filter(a => a.mode === 'epi').length;
-  const ecoCount    = MOCK_ALERTS.eco.length + state.triggeredAlerts.filter(a => a.mode === 'eco').length;
-  const supplyCount = MOCK_ALERTS.supply.length + state.triggeredAlerts.filter(a => a.mode === 'supply').length;
+  const epiCount    = state.alerts.filter(a => a.mode === 'epi').length;
+  const ecoCount    = state.alerts.filter(a => a.mode === 'eco').length;
+  const supplyCount = state.alerts.filter(a => a.mode === 'supply').length;
 
   const e = document.getElementById('mini-epi');
   const c = document.getElementById('mini-eco');
   const s = document.getElementById('mini-supply');
-  if (e) e.textContent = epiCount;
-  if (c) c.textContent = ecoCount;
-  if (s) s.textContent = supplyCount;
+  if (e) e.textContent = epiCount || '-';
+  if (c) c.textContent = ecoCount || '-';
+  if (s) s.textContent = supplyCount || '-';
 
   // Update memory status
   const mem = document.getElementById('status-memory');
-  if (mem) mem.textContent = `${epiCount + ecoCount + supplyCount} events indexed`;
+  if (mem) mem.textContent = `${state.alerts.length} events indexed`;
 }
 
 // ─── Status Last Poll Clock ─────────────────────────────────────────────────
@@ -710,30 +514,13 @@ document.addEventListener('DOMContentLoaded', () => {
   startStatusClock();
   updateMiniStats();
 
-  // Load initial alert feed (eco is default)
-  loadAlerts('eco');
+  // Start recurring polling
+  setInterval(pollSystemStatus, 2000);
+  setInterval(() => loadAlerts(state.activeMode), 15000);
 
-  // Demo hint in trigger input
-  const demoHints = {
-    epi: 'New respiratory illness cluster confirmed in Southeast Asia — WHO monitoring',
-    eco: 'Magnitude 7.1 earthquake strikes coastal Peru — tsunami watch issued',
-    supply: 'Major semiconductor factory shutting down amid ESG audit — chip shortage feared',
-  };
-
-    // Rotate placeholder hints every 5s
-    let hintIndex = 0;
-    const hintModes = ['epi', 'eco', 'supply'];
-    const triggerInput = document.getElementById('trigger-input');
-    if (triggerInput) {
-      setInterval(() => {
-        hintIndex = (hintIndex + 1) % 3;
-        triggerInput.placeholder = demoHints[hintModes[hintIndex]];
-      }, 5000);
-    }
-  
-    // Init Infographics
-    initCharts();
-  });
+  // Init Infographics
+  initCharts();
+});
   
   // ─── Chart.js Infographics ────────────────────────────────────────────────
   let charts = {};

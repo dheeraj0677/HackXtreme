@@ -1,0 +1,159 @@
+/* Styling for the Conveyor Belt View */
+body.conveyor-body {
+    background-color: #0f172a;
+    color: #e2e8f0;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+}
+
+.conveyor-main {
+    padding: 20px;
+    height: calc(100vh - 80px); /* Account for navbar */
+    box-sizing: border-box;
+}
+
+.conveyor-board {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+}
+
+.kanban-col {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.col-header {
+    background: rgba(15, 23, 42, 0.8);
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.col-icon { font-size: 20px; margin-right: 10px; }
+.col-title { font-weight: 600; font-family: 'Orbitron', sans-serif; flex: 1; letter-spacing: 0.05em; }
+.col-badge {
+    background: #334155;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.col-content {
+    padding: 15px;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: #475569 transparent;
+}
+
+.center-content {
+    justify-content: center;
+    align-items: center;
+}
+
+/* Card Styling */
+.belt-card {
+    background: #1e293b;
+    border-radius: 8px;
+    padding: 14px;
+    border-left: 4px solid #64748b;
+    font-size: 14px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    animation: slideInLeft 0.5s ease forwards;
+    transition: transform 0.2s;
+}
+
+.belt-card.epi { border-left-color: #f43f5e; }
+.belt-card.eco { border-left-color: #10b981; }
+.belt-card.supply { border-left-color: #f59e0b; }
+
+.belt-headline { font-weight: 500; margin-bottom: 8px; line-height: 1.5; }
+.belt-meta { font-size: 11px; color: #94a3b8; display: flex; justify-content: space-between; }
+
+/* Active Scanner Column */
+.col-active {
+    position: relative;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.05) inset;
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.scanner-beam {
+    position: absolute;
+    top: 50px; left: 0; right: 0; height: 100%;
+    background: linear-gradient(180deg, rgba(56, 189, 248, 0) 0%, rgba(56, 189, 248, 0.15) 50%, rgba(56, 189, 248, 0) 100%);
+    animation: scanPulse 3s linear infinite;
+    pointer-events: none;
+    z-index: 10;
+}
+
+@keyframes scanPulse {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+/* Disposition Columns */
+.disposition-split {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 20px;
+}
+
+.disp-section {
+    flex: 1;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.success-header { border-bottom: 2px solid #ef4444; }
+.danger-header { border-bottom: 2px solid #64748b; }
+
+.card-accepted { 
+    animation: popIn 0.3s ease forwards; 
+}
+.card-rejected { 
+    border-left-color: #475569 !important; 
+    background: rgba(30, 41, 59, 0.5);
+    opacity: 0.7; 
+    animation: dropOut 3s ease forwards; 
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes dropOut {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    80% { opacity: 0.5; transform: translateY(5px) scale(0.98); }
+    100% { opacity: 0; transform: translateY(20px) scale(0.9); }
+}
+
+.empty-state { color: #64748b; font-style: italic; font-size: 14px; }
+.pulse-icon { animation: pulse 2s infinite; }
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}

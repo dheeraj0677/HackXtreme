@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlobalSentry — Live Scanner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="conveyor.css" />
+</head>
+<body class="conveyor-body">
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <div class="nav-logo">
+          <span class="logo-icon">🛡️</span>
+          <span class="logo-text">Global<span class="accent">Sentry</span></span> <span style="color: #64748b; font-size: 14px; margin-left: 10px;">Live Scanner</span>
+        </div>
+      </div>
+      <div class="nav-right">
+        <a href="index.html" class="btn-ghost btn-sm" style="text-decoration: none;">← Back to Dashboard</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="conveyor-main">
+    <div class="conveyor-board">
+      
+      <!-- COLUMN 1: INCOMING FEEDS -->
+      <div class="kanban-col" id="col-polled">
+        <div class="col-header">
+          <div class="col-icon">📡</div>
+          <div class="col-title">Incoming Feeds</div>
+          <div class="col-badge" id="count-polled">0</div>
+        </div>
+        <div class="col-content" id="list-polled">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- COLUMN 2: ACTIVE SCANNER -->
+      <div class="kanban-col col-active" id="col-active">
+        <div class="col-header">
+          <div class="col-icon pulse-icon">🤖</div>
+          <div class="col-title">AI Processing</div>
+        </div>
+        <div class="col-content center-content" id="list-active">
+           <div class="empty-state">Waiting for next scan...</div>
+        </div>
+        <div class="scanner-beam"></div>
+      </div>
+
+      <!-- COLUMN 3: DISPOSITION -->
+      <div class="kanban-col" id="col-disposition">
+        <div class="disposition-split">
+          
+          <!-- ACCEPTED THREATS -->
+          <div class="disp-section" id="sec-accepted">
+            <div class="col-header success-header">
+              <div class="col-icon">🚨</div>
+              <div class="col-title">Verified Threats</div>
+              <div class="col-badge" id="count-accepted">0</div>
+            </div>
+            <div class="col-content" id="list-accepted"></div>
+          </div>
+
+          <!-- REJECTED (DROPPED) -->
+          <div class="disp-section" id="sec-rejected">
+            <div class="col-header danger-header">
+              <div class="col-icon">🗑️</div>
+              <div class="col-title">Discarded</div>
+              <div class="col-badge" id="count-rejected">0</div>
+            </div>
+            <div class="col-content" id="list-rejected"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="conveyor.js"></script>
+</body>
+</html>
