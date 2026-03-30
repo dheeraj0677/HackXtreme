@@ -1,0 +1,24 @@
+Neural Sentry Node Breakdown: What each agent does
+
+1. Profiler Node (The Personalizer)
+Matches news against your user_profile.json. It calculates a Relevance Score. If news about a storm is in your city, the score goes up; if it's in another country, it might be ignored.
+
+2. Retriever Node (The Historian)
+Uses RAG (Retrieval-Augmented Generation) to search your Qdrant database. It looks for similar things that happened in the past to give the AI context (e.g., "We saw a similar server leak 2 months ago").
+
+3. Agent A: Triage (The Sentry)
+Uses Gemini 1.5 Flash for high speed. It does a "gut check" on the headline.
+- Safe: The process skips straight to the Archiver.
+- Threat Suspected: The process escalates to Agent B for a closer look.
+
+4. Agent B: Analyst (The Brain)
+Uses Gemini 1.5 Pro for deep reasoning. It combines the new news with the historical context from the Retriever to perform a Cross-Modal Analysis. It calculates probability and creates a detailed risk report.
+
+5. Agent C: Validator (The Fact-Checker)
+Uses a Web Search Tool to find a second source. It compares the AI's theory against real-time news reports to ensure the threat is verified and not a hallucination.
+
+6. Notify Node (The Messenger)
+If Agent C says "Verified," this node triggers a high-priority alert to your Telegram bot with the full analysis and search results.
+
+7. Archiver Node (The Memory)
+The final stop. It converts the news into a vector embedding and stores it in Qdrant. This ensures the system "remembers" this event, making the Retriever Node smarter for future analysis.

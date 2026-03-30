@@ -1,0 +1,20 @@
+The Neural Sentry is already a powerful agentic system, but its "Agentic Workflow" (LangGraph) and "Memory" (Qdrant) foundations make it highly scalable.
+
+Here is a breakdown of the future scope for this model across four key areas:
+
+1. Data & Source Expansion (Multi-Modal Ingestion)
+Social & Community Monitoring: Integration with X (Twitter) APIs, Discord Webhooks, or Reddit to catch "breaking" news (like a zero-day exploit) hours before it hits official RSS news feeds.
+Visual Analysis: Using Gemini 1.5 Pro’s vision capabilities to analyze screenshots of alerts, technical diagrams, or even live video news feeds for threat detection.
+Email Sync: Automatically scanning your inbox for "Security Alert" or "Term of Service Update" emails to perform the same analysis on private notifications.
+2. Actionable Automation (The "Active" Sentry)
+Autonomous Remediation: Instead of just saying "Rotate your keys," the agent could (with permission) interact with services via APIs to automatically rotate leaked keys or lock a compromised account.
+Smart Querying: If the Validator node finds a gap in information, the system could proactively reach out to other "Sentry" agents or specific expert forums to gather missing details.
+3. Advanced Neural Memory
+Temporal Decay & Forgetting: Implementing logic to "forget" or archive outdated news while keeping high-importance historical threats (e.g., a software bug from 2 years ago that just resurfaced).
+Relationship Mapping: Using the vector database to create a Knowledge Graph of threats, showing how a "Gas Leak" in one city might be connected to a broader "Infrastructure Attack" trend.
+4. User Experience & Privacy
+Web Dashboard: A real-time Vite/React dashboard to visualize the LangGraph execution, see your "Memory" clusters in 2D/3D, and manage your user profile.
+Local Execution (Privacy Alpha): Running the first two nodes (Profiler and Triage) locally using Ollama or Llama 3. This ensures your personal profile data never leaves your machine unless a verified threat is found.
+Voice Interface: Allowing you to "talk" to your Neural Sentry via Telegram voice notes to ask questions like, "Hey, what happened with that server leak investigation from yesterday?"
+5. Specialized "Sentry Teams"Themed Agents: Creating specialized sub-graphs for different users. A "Crypto Sentry" for traders, a "DevOps Sentry" for server admins, or a "Personal Safety Sentry" for travelers.
+In short, the future of this model is moving from "A system that watches" to "A system that acts and remembers."

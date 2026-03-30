@@ -1,0 +1,11 @@
+{
+    "location": "New York, USA",
+    "interests": [
+        "Cybersecurity",
+        "AI/ML",
+        "Aviation Safety",
+        "Financial Markets"
+    ],
+    "job_role": "Security Researcher",
+    "proximity_threshold": 0.5
+}

@@ -1,0 +1,13 @@
+langgraph
+langchain-google-genai
+python-dotenv
+requests
+google-search-results
+langchain
+qdrant-client
+langchain-community
+sentence-transformers
+duckduckgo-search
+feedparser
+langchain-openai
+langchain-ollama
