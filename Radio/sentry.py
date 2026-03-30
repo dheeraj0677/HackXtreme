@@ -435,8 +435,8 @@ def notify_node(state: AgentState):
             with open(alerts_file, "r", encoding="utf-8") as f:
                 existing = _json.load(f)
         existing.insert(0, alert_obj)
-        # Keep last 1000 alerts
-        existing = existing[:1000]
+        # Keep last 100 alerts
+        existing = existing[:100]
         with open(alerts_file, "w", encoding="utf-8") as f:
             _json.dump(existing, f, indent=2, ensure_ascii=False)
     except Exception as e:
