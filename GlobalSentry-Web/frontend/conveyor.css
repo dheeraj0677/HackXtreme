@@ -4,19 +4,160 @@ body.conveyor-body {
     color: #e2e8f0;
     margin: 0;
     font-family: 'Inter', sans-serif;
-    overflow: hidden;
+    overflow: hidden; /* Prevent ALL page-level scrolling */
 }
 
 .conveyor-main {
-    padding: 20px;
-    height: calc(100vh - 80px); /* Account for navbar */
+    padding: 84px 20px 20px;
+    height: 100vh;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow: hidden;
 }
 
+/* ── Pipeline Visualizer ──────────────────────────────────────────── */
+.pipeline-viz {
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    border-radius: 16px;
+    padding: 20px 28px;
+    flex-shrink: 0;
+}
+
+.pipeline-header {
+    margin-bottom: 18px;
+}
+
+.pipeline-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.pipeline-title {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #f1f5f9;
+}
+
+.pipeline-status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    padding: 5px 14px;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+.pipeline-status-pill .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #38bdf8;
+    animation: pulse 2s infinite;
+}
+
+.pipeline-subtitle {
+    margin: 6px 0 0;
+    font-size: 0.8rem;
+    color: #64748b;
+    line-height: 1.4;
+    font-style: italic;
+    max-width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pipeline-nodes-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+}
+
+/* Override light-theme pipeline node styling for dark conveyor page */
+.conveyor-body .pipeline-node {
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 14px 10px;
+    text-align: center;
+    min-width: 85px;
+    max-width: 105px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.conveyor-body .pipeline-node.active {
+    border-color: #38bdf8;
+    background: rgba(56, 189, 248, 0.08);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
+    transform: translateY(-3px);
+}
+
+.conveyor-body .pipeline-node.done {
+    border-color: #22c55e;
+    background: rgba(34, 197, 94, 0.06);
+}
+
+.conveyor-body .pnode-icon  { font-size: 1.4rem; margin-bottom: 6px; }
+.conveyor-body .pnode-label { font-size: 0.7rem; font-weight: 600; line-height: 1.3; margin-bottom: 4px; color: #e2e8f0; }
+.conveyor-body .pnode-desc  { font-size: 0.62rem; color: #64748b; line-height: 1.3; }
+
+.conveyor-body .pipeline-arrow { font-size: 1.1rem; color: #475569; flex-shrink: 0; }
+
+.conveyor-body .data-tracker-pill {
+    position: absolute;
+    top: -28px;
+    left: 0;
+    background: #1e293b;
+    border: 1px solid #38bdf8;
+    color: #e2e8f0;
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    z-index: 10;
+    font-weight: 500;
+}
+.conveyor-body .data-tracker-pill::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #38bdf8 transparent transparent transparent;
+}
+
+/* ── Kanban Board ─────────────────────────────────────────────────── */
 .conveyor-board {
     display: flex;
     gap: 20px;
-    height: 100%;
+    flex: 1;
+    min-height: 0; /* Critical: allows flex child to shrink below content size */
+    overflow: hidden;
 }
 
 .kanban-col {
@@ -27,6 +168,7 @@ body.conveyor-body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    min-height: 0; /* Critical: allows flex child to shrink below content size */
 }
 
 .col-header {

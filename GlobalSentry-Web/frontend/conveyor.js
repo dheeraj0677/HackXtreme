@@ -33,17 +33,100 @@ function createCard(item, type) {
     return div;
 }
 
-// Fetch status from API
+// ─── Pipeline Node Highlighting ──────────────────────────────────────────────
+const PIPELINE_NODES = ['profiler', 'triage', 'retriever', 'analyst', 'correlator', 'validator', 'retry', 'notify', 'archiver'];
+const NODE_IDS = {
+    'profiler': 'pnode-profiler',
+    'triage': 'pnode-triage',
+    'retriever': 'pnode-retriever',
+    'analyst': 'pnode-analyst',
+    'correlator': 'pnode-correlator',
+    'validator': 'pnode-validator',
+    'retry': 'pnode-reflect',
+    'retry_counter': 'pnode-reflect',
+    'notify': 'pnode-notify',
+    'archiver': 'pnode-archive'
+};
+const NODE_LABELS = {
+    'profiler': 'Profiler',
+    'triage': 'Triage (Agent A)',
+    'retriever': 'Retriever (RAG)',
+    'analyst': 'Analyst (Agent B)',
+    'correlator': 'Correlator (Neural Moat)',
+    'validator': 'Validator (Agent C)',
+    'retry': 'Reflection Loop',
+    'retry_counter': 'Reflection Loop',
+    'notify': 'Notify',
+    'archiver': 'Archiver'
+};
+
+function updatePipelineViz(currentAnalysis) {
+    const statusText = document.getElementById('pipeline-status-text');
+    const headlineEl = document.getElementById('pipeline-headline');
+    const trackerPill = document.getElementById('data-tracker-pill');
+
+    // Reset all pipeline nodes
+    document.querySelectorAll('.pipeline-node').forEach(n => {
+        n.classList.remove('active', 'done');
+    });
+
+    if (!currentAnalysis) {
+        if (statusText) statusText.textContent = 'Waiting for next signal...';
+        if (headlineEl) headlineEl.textContent = '';
+        if (trackerPill) trackerPill.style.opacity = '0';
+        return;
+    }
+
+    const activeNode = currentAnalysis.active_node;
+    const activeLabel = NODE_LABELS[activeNode] || activeNode;
+    const modeLabel = currentAnalysis.mode ? currentAnalysis.mode.toUpperCase() : '?';
+
+    if (statusText) statusText.textContent = `⚡ ${activeLabel} — [${modeLabel}]`;
+    if (headlineEl) headlineEl.textContent = currentAnalysis.headline;
+
+    // Highlight pipeline nodes: done → active → pending
+    const currentID = NODE_IDS[activeNode];
+    let isDonePhase = true;
+
+    PIPELINE_NODES.forEach(n => {
+        const elId = NODE_IDS[n];
+        if (!elId) return;
+        const el = document.getElementById(elId);
+        if (!el) return;
+
+        if (elId === currentID) {
+            el.classList.add('active');
+            isDonePhase = false;
+
+            // Position tracker pill over active node
+            if (trackerPill) {
+                trackerPill.textContent = currentAnalysis.headline;
+                trackerPill.style.opacity = '1';
+                const containerEl = document.getElementById('pipeline-nodes');
+                const containerRect = containerEl.getBoundingClientRect();
+                const nodeRect = el.getBoundingClientRect();
+                const leftPos = (nodeRect.left - containerRect.left) + (nodeRect.width / 2);
+                trackerPill.style.transform = `translateX(${leftPos}px) translateX(-50%)`;
+            }
+        } else if (isDonePhase) {
+            el.classList.add('done');
+        }
+    });
+}
+
+// ─── Fetch status from API ───────────────────────────────────────────────────
 async function pollStatus() {
     try {
         const res = await fetch('http://localhost:8000/api/status');
         if (!res.ok) return;
         const data = await res.json();
         
-        // 1. Update Active Analysis
+        // 1. Update Pipeline Visualization
+        updatePipelineViz(data.current_analysis);
+        
+        // 2. Update Active Analysis Card
         const activeContainer = document.getElementById('list-active');
         if (data.current_analysis) {
-            // Check if we are already showing it to prevent re-rendering and losing animation
             if (activeContainer.dataset.activeId !== data.current_analysis.headline) {
                 activeContainer.innerHTML = '';
                 const card = createCard(data.current_analysis, 'active');
@@ -56,7 +139,6 @@ async function pollStatus() {
                 activeContainer.appendChild(card);
                 activeContainer.dataset.activeId = data.current_analysis.headline;
             } else {
-                 // Update the active node text without re-rendering the whole card
                  const nodeText = activeContainer.querySelector('div:last-child');
                  if (nodeText && data.current_analysis.active_node) {
                      nodeText.textContent = `⚡ Evaluating via ${data.current_analysis.active_node}...`;
@@ -69,17 +151,15 @@ async function pollStatus() {
             }
         }
 
-        // 2. Rejected
+        // 3. Rejected
         const rejectedContainer = document.getElementById('list-rejected');
         if (data.recent_rejections) {
-            // Keep track of things we just added so we don't duplicate
             data.recent_rejections.reverse().forEach(rej => {
                 const h = rej.headline;
                 if (!seenRejected.has(h)) {
                     addToSetLimited(seenRejected, h);
                     const card = createCard(rej, 'rejected');
                     rejectedContainer.prepend(card);
-                    // Remove DOM element after CSS animation finishes
                     card.addEventListener('animationend', () => card.remove());
                 }
             });
@@ -92,26 +172,27 @@ async function pollStatus() {
 
 async function fetchAccepted() {
     try {
-        const res = await fetch('http://localhost:8000/api/alerts?limit=15');
+        const res = await fetch('http://localhost:8000/api/alerts?limit=50');
         if (!res.ok) return;
         const data = await res.json();
         const container = document.getElementById('list-accepted');
         
-        // Iterate backwards to prepend older ones first if they are new to the UI
-        [...data.alerts].reverse().forEach(alert => {
+        // Only show agent-processed alerts — NOT raw RSS feeds
+        const agentAlerts = data.alerts.filter(a => a.is_raw_feed !== true);
+        
+        [...agentAlerts].reverse().forEach(alert => {
             const h = alert.headline;
             if (!seenAccepted.has(h)) {
                 addToSetLimited(seenAccepted, h);
                 const card = createCard(alert, 'accepted');
                 container.prepend(card);
                 
-                // Keep list from growing infinitely 
                 if (container.children.length > 30) {
                     container.removeChild(container.lastChild);
                 }
             }
         });
-        document.getElementById('count-accepted').innerText = data.total;
+        document.getElementById('count-accepted').innerText = seenAccepted.size;
     } catch(e) {
         console.error("Conveyor Alerts Error:", e);
     }
@@ -121,7 +202,6 @@ async function fetchPolledInputs() {
     try {
         const modes = ['epi', 'eco', 'supply'];
         
-        // Fetch in parallel
         const fetchPromises = modes.map(m => fetch(`http://localhost:8000/api/feed/${m}?limit=50`).then(res => res.ok ? res.json() : null));
         const results = await Promise.all(fetchPromises);
         
@@ -132,11 +212,9 @@ async function fetchPolledInputs() {
             }
         });
         
-        // Sort newest first
         allFeeds.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         
         const container = document.getElementById('list-polled');
-        // Reverse array to maintain chronological top-prepend order
         allFeeds.reverse().forEach(item => {
             const h = item.headline;
             if (!seenPolled.has(h)) {
@@ -144,14 +222,12 @@ async function fetchPolledInputs() {
                 const card = createCard(item, 'polled');
                 container.prepend(card);
                 
-                // Keep list capped
                 if (container.children.length > 100) {
                     container.removeChild(container.lastChild);
                 }
             }
         });
         
-        // Just show current buffer length
         document.getElementById('count-polled').innerText = document.getElementById('list-polled').children.length;
     } catch(e) {
         console.error("Conveyor Feeds Error:", e);
@@ -160,7 +236,7 @@ async function fetchPolledInputs() {
 
 setInterval(pollStatus, 1000);
 setInterval(fetchAccepted, 3000);
-setInterval(fetchPolledInputs, 15000); // Polled inputs don't change often, once every 15s is fine
+setInterval(fetchPolledInputs, 15000);
 
 // Initial Load
 fetchPolledInputs();

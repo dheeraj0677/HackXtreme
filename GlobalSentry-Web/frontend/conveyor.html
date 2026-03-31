@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GlobalSentry — Live Scanner</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+  <title>GlobalSentry — Live Scanner & Pipeline</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="conveyor.css" />
 </head>
@@ -19,12 +19,95 @@
         </div>
       </div>
       <div class="nav-right">
+        <div class="live-indicator">
+          <div class="live-dot"></div>
+          <span>PIPELINE ACTIVE</span>
+        </div>
         <a href="index.html" class="btn-ghost btn-sm" style="text-decoration: none;">← Back to Dashboard</a>
       </div>
     </div>
   </nav>
 
   <main class="conveyor-main">
+
+    <!-- ═══════════════════════════════════════════
+         AI PIPELINE VISUALIZER
+    ═══════════════════════════════════════════ -->
+    <section class="pipeline-viz" id="pipeline-viz">
+      <div class="pipeline-header">
+        <div class="pipeline-title-row">
+          <h2 class="pipeline-title">🧬 LangGraph Agent Pipeline</h2>
+          <div class="pipeline-status-pill" id="pipeline-status-pill">
+            <span class="status-dot"></span>
+            <span id="pipeline-status-text">Waiting for signal...</span>
+          </div>
+        </div>
+        <p class="pipeline-subtitle" id="pipeline-headline"></p>
+      </div>
+
+      <div class="pipeline-nodes-row" id="pipeline-nodes" style="position: relative;">
+        <!-- Live Data Tracker Pill -->
+        <div class="data-tracker-pill" id="data-tracker-pill" style="opacity: 0;">Evaluating Data...</div>
+
+        <div class="pipeline-node" id="pnode-profiler" data-step="0">
+          <div class="pnode-icon">📥</div>
+          <div class="pnode-label">Profiler</div>
+          <div class="pnode-desc">Relevance scoring</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-triage" data-step="1">
+          <div class="pnode-icon">⚡</div>
+          <div class="pnode-label">Agent A<br/>Triage</div>
+          <div class="pnode-desc">YES/NO gate</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-retriever" data-step="2">
+          <div class="pnode-icon">🗃️</div>
+          <div class="pnode-label">Retriever<br/>(RAG)</div>
+          <div class="pnode-desc">Qdrant lookup</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-analyst" data-step="3">
+          <div class="pnode-icon">🧠</div>
+          <div class="pnode-label">Agent B<br/>Analyst</div>
+          <div class="pnode-desc">Deep analysis</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-correlator" data-step="4">
+          <div class="pnode-icon">🔗</div>
+          <div class="pnode-label">Neural<br/>Moat</div>
+          <div class="pnode-desc">Cross-mode</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-validator" data-step="5">
+          <div class="pnode-icon">🔍</div>
+          <div class="pnode-label">Agent C<br/>Validator</div>
+          <div class="pnode-desc">Fact-check</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-reflect" data-step="6">
+          <div class="pnode-icon">🔁</div>
+          <div class="pnode-label">Reflection<br/>Loop</div>
+          <div class="pnode-desc">Self-correct</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-notify" data-step="7">
+          <div class="pnode-icon">📣</div>
+          <div class="pnode-label">Notify</div>
+          <div class="pnode-desc">Alert push</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="pnode-archive" data-step="8">
+          <div class="pnode-icon">💾</div>
+          <div class="pnode-label">Archive<br/>(Qdrant)</div>
+          <div class="pnode-desc">RAG memory</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         KANBAN BOARD
+    ═══════════════════════════════════════════ -->
     <div class="conveyor-board">
       
       <!-- COLUMN 1: INCOMING FEEDS -->

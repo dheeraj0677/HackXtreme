@@ -173,7 +173,11 @@
           <li>✓ Pathogen similarity matching</li>
         </ul>
         <div class="pillar-footer">
-          <div class="pillar-stat"><span class="pillar-stat-num epi-color">312</span> active alerts</div>
+          <div class="pillar-stat"><span class="pillar-stat-num epi-color" id="epi-threat-count">—</span> threats detected</div>
+          <div class="pillar-threat-ticker" id="epi-threat-ticker">
+            <div class="threat-ticker-label">⚡ Latest Consequences</div>
+            <ul class="threat-ticker-list" id="epi-consequences-list"></ul>
+          </div>
           <button class="btn-pillar btn-pillar-epi" id="btn-explore-epi" onclick="switchModeAndScroll('epi')">
             Monitor Now →
           </button>
@@ -197,7 +201,11 @@
           <li>✓ Wildfire risk indexing</li>
         </ul>
         <div class="pillar-footer">
-          <div class="pillar-stat"><span class="pillar-stat-num eco-color">489</span> active alerts</div>
+          <div class="pillar-stat"><span class="pillar-stat-num eco-color" id="eco-threat-count">—</span> threats detected</div>
+          <div class="pillar-threat-ticker" id="eco-threat-ticker">
+            <div class="threat-ticker-label">⚡ Latest Consequences</div>
+            <ul class="threat-ticker-list" id="eco-consequences-list"></ul>
+          </div>
           <button class="btn-pillar btn-pillar-eco" id="btn-explore-eco" onclick="switchModeAndScroll('eco')">
             Monitor Now →
           </button>
@@ -220,7 +228,11 @@
           <li>✓ Tier-2 supplier visibility</li>
         </ul>
         <div class="pillar-footer">
-          <div class="pillar-stat"><span class="pillar-stat-num supply-color">198</span> active alerts</div>
+          <div class="pillar-stat"><span class="pillar-stat-num supply-color" id="supply-threat-count">—</span> threats detected</div>
+          <div class="pillar-threat-ticker" id="supply-threat-ticker">
+            <div class="threat-ticker-label">⚡ Latest Consequences</div>
+            <ul class="threat-ticker-list" id="supply-consequences-list"></ul>
+          </div>
           <button class="btn-pillar btn-pillar-supply" id="btn-explore-supply" onclick="switchModeAndScroll('supply')">
             Monitor Now →
           </button>
@@ -259,6 +271,86 @@
           <canvas id="chartSupply"></canvas>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       🧠 NEURAL MOAT — Cross-Mode Convergence
+  ═══════════════════════════════════════════ -->
+  <section class="neural-moat-section reveal" id="neural-moat">
+    <div class="section-header">
+      <div class="section-label">🧠 The Neural Moat</div>
+      <h2 class="section-title">Cross-Mode Convergence Engine</h2>
+      <p class="section-subtitle">When epidemics, climate events, and supply chain failures overlap — that's where the real danger hides. The Neural Moat finds these invisible connections.</p>
+    </div>
+
+    <div class="moat-layout">
+
+      <!-- LEFT: Network Graph Visualization -->
+      <div class="moat-graph-card">
+        <h4 class="moat-card-title">🔗 Inter-Sentry Link Map</h4>
+        <div class="moat-network" id="moat-network">
+          <svg viewBox="0 0 400 280" class="moat-svg" id="moat-svg">
+            <!-- Connection lines (drawn dynamically) -->
+            <line id="link-epi-eco" class="moat-link" x1="100" y1="80" x2="300" y2="80" />
+            <line id="link-eco-supply" class="moat-link" x1="300" y1="80" x2="200" y2="230" />
+            <line id="link-epi-supply" class="moat-link" x1="100" y1="80" x2="200" y2="230" />
+
+            <!-- Nodes -->
+            <g class="moat-node" id="moat-node-epi">
+              <circle cx="100" cy="80" r="38" class="node-circle node-epi" />
+              <text x="100" y="75" class="node-emoji">🩺</text>
+              <text x="100" y="96" class="node-label">EPI</text>
+            </g>
+            <g class="moat-node" id="moat-node-eco">
+              <circle cx="300" cy="80" r="38" class="node-circle node-eco" />
+              <text x="300" y="75" class="node-emoji">🌪️</text>
+              <text x="300" y="96" class="node-label">ECO</text>
+            </g>
+            <g class="moat-node" id="moat-node-supply">
+              <circle cx="200" cy="230" r="38" class="node-circle node-supply" />
+              <text x="200" y="225" class="node-emoji">♻️</text>
+              <text x="200" y="246" class="node-label">SUPPLY</text>
+            </g>
+
+            <!-- Link count badges -->
+            <g id="badge-epi-eco" class="link-badge" style="display:none;">
+              <circle cx="200" cy="65" r="14" class="badge-bg" />
+              <text x="200" y="70" class="badge-text" id="badge-epi-eco-text">0</text>
+            </g>
+            <g id="badge-eco-supply" class="link-badge" style="display:none;">
+              <circle cx="260" cy="165" r="14" class="badge-bg" />
+              <text x="260" y="170" class="badge-text" id="badge-eco-supply-text">0</text>
+            </g>
+            <g id="badge-epi-supply" class="link-badge" style="display:none;">
+              <circle cx="140" cy="165" r="14" class="badge-bg" />
+              <text x="140" y="170" class="badge-text" id="badge-epi-supply-text">0</text>
+            </g>
+          </svg>
+        </div>
+        <div class="moat-stats-row">
+          <div class="moat-stat">
+            <span class="moat-stat-val" id="moat-total">0</span>
+            <span class="moat-stat-label">Convergences</span>
+          </div>
+          <div class="moat-stat">
+            <span class="moat-stat-val" id="moat-vectors">0</span>
+            <span class="moat-stat-label">Vectors in Memory</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Live Convergence Alerts Feed -->
+      <div class="moat-alerts-card">
+        <h4 class="moat-card-title">⚡ Live Convergence Alerts</h4>
+        <div class="moat-alerts-list" id="moat-alerts-list">
+          <div class="moat-empty">
+            <span class="moat-empty-icon">🔍</span>
+            <span>Scanning for cross-mode patterns...</span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -389,96 +481,6 @@
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════
-       AI PIPELINE VISUALIZER
-  ═══════════════════════════════════════════ -->
-  <section class="pipeline-section" id="pipeline">
-    <div class="section-header">
-      <div class="section-label">LangGraph Architecture</div>
-      <h2 class="section-title">AI Agent Pipeline</h2>
-      <p class="section-subtitle">Nine specialized nodes working in sequence — with a self-correcting reflection loop — to triage, analyze, correlate, verify, and archive every threat signal.</p>
-    </div>
-
-    <div class="pipeline-container">
-      <div class="pipeline-nodes" id="pipeline-nodes" style="position: relative;">
-        <!-- Live Data Tracker Pill -->
-        <div class="data-tracker-pill" id="data-tracker-pill" style="opacity: 0;">Evaluating Data...</div>
-        
-        <div class="pipeline-node" id="pnode-profiler" data-step="0">
-          <div class="pnode-icon">📥</div>
-          <div class="pnode-label">Profiler</div>
-          <div class="pnode-desc">Stakeholder relevance scoring</div>
-          <div class="pnode-time" id="ptime-0"></div>
-        </div>
-        <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node" id="pnode-triage" data-step="1">
-          <div class="pnode-icon">⚡</div>
-          <div class="pnode-label">Agent A<br/>Triage</div>
-          <div class="pnode-desc">Flash YES/NO threat gate</div>
-          <div class="pnode-time" id="ptime-1"></div>
-        </div>
-        <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node" id="pnode-retriever" data-step="2">
-          <div class="pnode-icon">🗃️</div>
-          <div class="pnode-label">Retriever<br/>(RAG)</div>
-          <div class="pnode-desc">Qdrant same-mode lookup</div>
-          <div class="pnode-time" id="ptime-2"></div>
-        </div>
-        <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node" id="pnode-analyst" data-step="3">
-          <div class="pnode-icon">🧠</div>
-          <div class="pnode-label">Agent B<br/>Analyst</div>
-          <div class="pnode-desc">Deep domain analysis</div>
-          <div class="pnode-time" id="ptime-3"></div>
-        </div>
-        <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node" id="pnode-correlator" data-step="4">
-          <div class="pnode-icon">🔗</div>
-          <div class="pnode-label">Neural<br/>Moat</div>
-          <div class="pnode-desc">Cross-mode correlation</div>
-          <div class="pnode-time" id="ptime-4"></div>
-        </div>
-        <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node" id="pnode-validator" data-step="5">
-          <div class="pnode-icon">🔍</div>
-          <div class="pnode-label">Agent C<br/>Validator</div>
-          <div class="pnode-desc">DuckDuckGo fact-check</div>
-          <div class="pnode-time" id="ptime-5"></div>
-        </div>
-        <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node" id="pnode-reflect" data-step="6">
-          <div class="pnode-icon">🔁</div>
-          <div class="pnode-label">Reflection<br/>Loop</div>
-          <div class="pnode-desc">Self-correct if unverified</div>
-          <div class="pnode-time" id="ptime-6"></div>
-        </div>
-        <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node" id="pnode-notify" data-step="7">
-          <div class="pnode-icon">📣</div>
-          <div class="pnode-label">Notify<br/>(Telegram)</div>
-          <div class="pnode-desc">Stakeholder alerts</div>
-          <div class="pnode-time" id="ptime-7"></div>
-        </div>
-        <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node" id="pnode-archive" data-step="8">
-          <div class="pnode-icon">💾</div>
-          <div class="pnode-label">Archive<br/>(Qdrant)</div>
-          <div class="pnode-desc">RAG memory storage</div>
-          <div class="pnode-time" id="ptime-8"></div>
-        </div>
-      </div>
-
-      <div class="pipeline-demo">
-        <div class="pipeline-status-text" id="pipeline-status-text">
-          Pipeline is currently listening for new threats...
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-
-
 
   <!-- ═══════════════════════════════════════════
        FOOTER
@@ -505,7 +507,7 @@
         <div class="footer-col">
           <div class="footer-col-title">Platform</div>
           <button class="footer-link" onclick="scrollToSection('dashboard')">Dashboard</button>
-          <button class="footer-link" onclick="scrollToSection('pipeline')">AI Pipeline</button>
+          <a class="footer-link" href="conveyor.html" style="text-decoration:none;">AI Pipeline</a>
 
         </div>
         <div class="footer-col">

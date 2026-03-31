@@ -4,80 +4,67 @@ from datetime import datetime, timedelta
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
+# Define lists for generating headlines
 TOPICS = [
-    "Unexpected surge in respiratory illnesses",
-    "Avian influenza (H5N1) detected in local markets",
-    "Vaccine distribution bottlenecks",
-    "Emerging viral strain with high transmissibility",
-    "Waterborne disease outbreak following flooding",
-    "Antimicrobial resistance (AMR) clusters identified",
-    "Mass vaccination campaign launched",
-    "Quarantine protocols activated at international terminals",
-    "Zoonotic spillover event confirmed",
-    "Health system capacity reaching critical thresholds"
+    "Outbreak", "Pandemic", "Epidemic", "Disease surge", "Vaccine shortage", "Quarantine", "Health alert",
+    "Infection spike", "Pathogen detection", "Public health emergency", "Zoonotic spillover", "Antibiotic resistance",
+    "Vector-borne disease", "Respiratory illness", "Gastroenteritis outbreak", "Hemorrhagic fever", "Measles resurgence",
+    "Polio vaccination", "Meningitis cases", "Anthrax incident", "Onchocerciasis re-emergence", "Legionnaires' disease"
 ]
 
 LOCATIONS = [
-    "New York", "London", "Paris", "Tokyo", "Mumbai", "Kinshasa", "Brasilia", 
-    "Cairo", "Hanoi", "Sydney", "Geneva", "Atlanta", "Johannesburg", "Bangkok"
+    "Haiti", "Bangladesh", "Nepal", "Yemen", "Somalia", "Gaza Strip", "Siberia", "Volta River basin", "India",
+    "Nigeria", "Niger", "Chad", "Istanbul", "Mediterranean", "Sahel countries", "Pacific Islands", "Middle East",
+    "East Asia", "Southeast Asia", "West Africa", "South Asia", "Remote regions"
 ]
 
-ENTITIES = [
-    "WHO (World Health Organization)", "CDC (Centers for Disease Control)", 
-    "Gavi, the Vaccine Alliance", "IFRC (Red Cross)", "MSF (Doctors Without Borders)", 
-    "Pfizer", "Moderna", "AstraZeneca", "Local Ministry of Health", "NIH", "CEPI"
+ORGANIZATIONS = [
+    "WHO", "CDC", "ECDC", "GOARN", "ProMED", "ReliefWeb", "HealthMap", "UNICEF", "Red Cross", "Médecins Sans Frontières"
 ]
 
 def generate_headline():
     topic = random.choice(TOPICS)
-    loc = random.choice(LOCATIONS)
-    entity = random.choice(ENTITIES)
-    templates = [
-        f"Critical alert: {topic} reported near {loc}, monitoring {entity} response.",
-        f"{entity} issues warning over {topic.lower()} originating from {loc}.",
-        f"Global health networks brace for impact as {topic.lower()} hits {loc}.",
-        f"Update: {topic} at {loc} causes ripple effects for {entity} logistics.",
-        f"Urgent: {entity} confirms {topic.lower()} in {loc} region."
-    ]
-    return random.choice(templates)
+    location = random.choice(LOCATIONS)
+    organization = random.choice(ORGANIZATIONS)
+    return f"{topic} in {location} reported by {organization}"
 
 def generate_description():
-    return "This is a simulated epidemiological threat intelligence report for the GlobalSentry dashboard. The incident describes ongoing health risks and their projected impact on global health security and public safety."
+    return "GlobalSentry Epidemic Threat Feed - Monitoring global health threats and outbreaks."
 
+def generate_pubdate():
+    # Generate a random date within the last year
+    start_date = datetime.now() - timedelta(days=365)
+    random_date = start_date + timedelta(days=random.randint(0, 365))
+    return random_date.strftime("%a, %d %b %Y %H:%M:%S GMT")
+
+# Create the root element
 rss = ET.Element("rss", version="2.0")
 channel = ET.SubElement(rss, "channel")
 
-title = ET.SubElement(channel, "title")
-title.text = "GlobalSentry Epidemiological Threat Feed"
-link = ET.SubElement(channel, "link")
-link.text = "http://globalsentry.local/epi-feed"
-desc = ET.SubElement(channel, "description")
-desc.text = "Real-time simulated epidemiological disruptions and threats."
+# Add channel metadata
+ET.SubElement(channel, "title").text = "GlobalSentry Epidemic Threat Feed"
+ET.SubElement(channel, "link").text = "https://globalsentry.com/epi-feed"
+ET.SubElement(channel, "description").text = "Real-time updates on global epidemic threats and health emergencies."
+ET.SubElement(channel, "language").text = "en-us"
+ET.SubElement(channel, "lastBuildDate").text = datetime.now().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
-now = datetime.utcnow()
-
-for i in range(500):
+# Generate 500 items
+for _ in range(500):
     item = ET.SubElement(channel, "item")
-    
-    item_title = ET.SubElement(item, "title")
-    item_title.text = generate_headline()
-    
-    item_link = ET.SubElement(item, "link")
-    item_link.text = f"http://globalsentry.local/alert/epi-{uuid.uuid4()}"
-    
-    item_desc = ET.SubElement(item, "description")
-    item_desc.text = generate_description()
-    
-    pub_date = ET.SubElement(item, "pubDate")
-    item_time = now - timedelta(minutes=random.randint(1, 10000))
-    pub_date.text = item_time.strftime("%a, %d %b %Y %H:%M:%S GMT")
-    
-    guid = ET.SubElement(item, "guid")
-    guid.text = f"epi-{uuid.uuid4()}"
+    ET.SubElement(item, "title").text = generate_headline()
+    item_id = str(uuid.uuid4())
+    ET.SubElement(item, "link").text = f"https://globalsentry.com/epi-alert/{item_id}"
+    ET.SubElement(item, "description").text = generate_description()
+    ET.SubElement(item, "pubDate").text = generate_pubdate()
+    ET.SubElement(item, "guid").text = item_id
 
-xmlstr = minidom.parseString(ET.tostring(rss)).toprettyxml(indent="  ")
+# Convert to string and pretty print
+rough_string = ET.tostring(rss, 'utf-8')
+reparsed = minidom.parseString(rough_string)
+pretty_xml = reparsed.toprettyxml(indent="  ", encoding="utf-8")
 
-with open("epi_feed.xml", "w", encoding="utf-8") as f:
-    f.write(xmlstr)
+# Write to file
+with open("epi_feed.xml", "wb") as f:
+    f.write(pretty_xml)
 
-print("Successfully generated epi_feed.xml with 500 items.")
+print("epi_feed.xml generated with 500 items.")

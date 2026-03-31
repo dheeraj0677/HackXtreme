@@ -1,0 +1,119 @@
+======================================================================
+         QDRANT DATABASE VIEWER
+======================================================================
+Collections found: ['neural_sentry_memory', 'global_sentry_memory']
+
+======================================================================
+  Collection: neural_sentry_memory
+  Points: 0 | Vector dim: 768 | Distance: Cosine
+======================================================================
+  (empty)
+
+======================================================================
+  Collection: global_sentry_memory
+  Points: 720 | Vector dim: 384 | Distance: Cosine
+======================================================================
+  Payload keys: ['page_content', 'metadata']
+
+    1. [EPI] sev=4  Epidemic in Southeast Asia reported by GOARN
+    2. [EPI] sev=0  Gastroenteritis outbreak in Yemen reported by WHO
+    3. [EPI] sev=0  Marburg virus case confirmed in Tanzania near Kagera border — contact tracing underway
+    4. [EPI] sev=0  India launches new yoga protocols to fight lifestyle diseases
+    5. [EPI] sev=0  India saw 24,700 maternal deaths per one lakh livebirths in 2023
+    6. [EPI] sev=0  Severe irritability in teens can be reduced by daily doses of vitamins, minerals — new research
+    7. [EPI] sev=0  Vaccine shortage in Middle East reported by GOARN
+    8. [ECO] sev=4  India - Avalanches (IMD, media) (ECHO Daily Flash of 30 March 2026)
+    9. [EPI] sev=0  Tuberculosis outbreak in South African gold mines — multi-drug resistant strain confirmed
+   10. [EPI] sev=0  ‘My heart hurts when I lift my left arm. Is this normal; is it a heart disease?’
+   11. [ECO] sev=0  China's Henan province hit by 'once in 1,000 years' rainfall — Zhengzhou subway flooded
+   12. [EPI] sev=0  WHO confirms cholera outbreak in Mozambique's Zambezia province — 2,400 cases in 3 weeks
+   13. [EPI] sev=3  Gastroenteritis outbreak in India reported by ReliefWeb
+   14. [EPI] sev=0  Only 1 in 3 schoolchildren meets basic fitness levels
+   15. [EPI] sev=3  India's Karnataka state reports 8,500 dengue cases amid unseasonal monsoon rains
+   16. [ECO] sev=0  Kenya: World Water Day: Salesian Missions highlights water projects that make clean, fresh water ava
+   17. [EPI] sev=0  Vaccine shortage in Nepal reported by ECDC
+   18. [EPI] sev=3  Health alert in Southeast Asia reported by WHO
+   19. [EPI] sev=0  Now just pop a pill to stop blood clots
+   20. [EPI] sev=0  South Sudan declares cholera emergency in Upper Nile state following severe flooding
+   21. [SUPPLY] sev=0  Lithium carbonate prices collapse 60% — Chilean and Australian miners halt expansion plans
+   22. [SUPPLY] sev=0  Samsung's Austin fab contamination incident destroys 3 months of advanced chip output
+   23. [ECO] sev=0  Rain in parts of Punjab, Haryana; temperatures hover below normal
+   24. [EPI] sev=0  CDC investigating unusual pneumonia cluster in Minnesota — 23 cases, pathogen unidentified
+   25. [EPI] sev=0  Legionnaires' disease in West Africa reported by ECDC
+   26. [EPI] sev=3  Leptospirosis spike in Kerala after severe flooding — 420 confirmed cases this month
+   27. [ECO] sev=0  Automatic train protection system on Delhi-Mumbai route: Kavach 4.0 commissioned on Vadodara-Nagda s
+   28. [EPI] sev=0  Akshay Kumar encourages annual PSA testing for men: ‘I lost the most important person in my life to 
+   29. [EPI] sev=3  Gastroenteritis outbreak in Remote regions reported by ProMED
+   30. [EPI] sev=0  Tuberculosis outbreak in South African gold mines — multi-drug resistant strain confirmed
+   31. [SUPPLY] sev=4  India bans rice exports as monsoon failure threatens 40% crop shortfall
+   32. [SUPPLY] sev=3  ESG audit flags major palm oil supplier in Indonesia for illegal deforestation; EU buyers suspend co
+   33. [EPI] sev=0  Peru declares health emergency in Lima as dengue cases overwhelm hospital capacity
+   34. [SUPPLY] sev=0  Critical graphite shortage threatens EV battery production — prices up 85% year-over-year
+   35. [EPI] sev=0  ‘My left eyelid has been twitching for about a month now. What’s wrong with me?’
+   36. [EPI] sev=3  Leptospirosis spike in Kerala after severe flooding — 420 confirmed cases this month
+   37. [EPI] sev=0  Public health emergency in Istanbul reported by CDC
+   38. [EPI] sev=0  WHO confirms cholera outbreak in Mozambique's Zambezia province — 2,400 cases in 3 weeks
+   39. [EPI] sev=4  WHO confirms cholera outbreak in Mozambique's Zambezia province — 2,400 cases in 3 weeks
+   40. [ECO] sev=0  World: Locust Watch: Sub/seasonal precipitation predictions in the Desert Locust spring and summer b
+   41. [SUPPLY] sev=0  Critical graphite shortage threatens EV battery production — prices up 85% year-over-year
+   42. [EPI] sev=0  Uganda's Ebola containment under strain as 3 new cases emerge outside quarantine zone
+   43. [EPI] sev=0  Public health emergency in Middle East reported by ECDC
+   44. [EPI] sev=3  Typhoid fever outbreak in Karachi linked to contaminated water supply — 3,200 cases
+   45. [SUPPLY] sev=0  Global automotive chip shortage returns as ASML delays EUV lithography machine deliveries
+   46. [EPI] sev=0  Health alert in Sahel countries reported by HealthMap
+   47. [EPI] sev=3  Outbreak in Remote regions reported by ReliefWeb
+   48. [ECO] sev=0  Procession turns deadly in Jharkhand, 21-year-old killed in knife stunt mishap
+   49. [EPI] sev=3  Disease surge in Southeast Asia reported by CDC
+   50. [EPI] sev=0  Nigeria's Kano state sees measles surge — MSF sets up emergency treatment centers
+   51. [SUPPLY] sev=4  Major semiconductor fabrication plant in Taiwan halts operations following earthquake damage.
+   52. [ECO] sev=0  World: FAO Chief Economist warns of severe global food security risks from disruption to Strait of H
+   53. [EPI] sev=0  Legionnaires' disease in Bangladesh reported by Médecins Sans Frontières
+   54. [EPI] sev=0  Common diabetes drug works by acting on brain, study shows
+   55. [EPI] sev=0  South Sudan declares cholera emergency in Upper Nile state following severe flooding
+   56. [EPI] sev=0  Candida auris outbreak in 4 US hospitals; CDC classifies as urgent antimicrobial threat
+   57. [ECO] sev=0  The alliance that broke: How a disputed accord is reshaping tribal politics in Tripura
+   58. [EPI] sev=4  Measles kills 140 children in Samoa amid vaccination hesitancy crisis
+   59. [EPI] sev=0  Measles kills 140 children in Samoa amid vaccination hesitancy crisis
+   60. [EPI] sev=0  DRC reports new Ebola cluster in North Kivu — 14 confirmed cases near conflict zone
+   61. [ECO] sev=5  Bangladesh experiences worst monsoon flooding in 40 years; 7.2 million displaced
+   62. [EPI] sev=0  Public health emergency in Istanbul reported by CDC
+   63. [EPI] sev=4  Measles kills 140 children in Samoa amid vaccination hesitancy crisis
+   64. [EPI] sev=0  Now just pop a pill to stop blood clots
+   65. [SUPPLY] sev=4  Bangladesh garment factory supply disrupted after flash floods shut key road and rail corridors.
+   66. [EPI] sev=0  Peru declares health emergency in Lima as dengue cases overwhelm hospital capacity
+   67. [ECO] sev=4  Severe drought declared across the Horn of Africa; crop failure projected for next two seasons.
+   68. [ECO] sev=0  CAPF Bill weakens legislature, ignores judiciary, against federal structure: Opposition in Rajya Sab
+   69. [EPI] sev=0  India among countries with highest total maternal deaths in 2023: Global analysis
+   70. [EPI] sev=0  Yellow fever vaccine stockpile critically low as outbreaks hit 8 African nations simultaneously
+   71. [EPI] sev=0  Anthrax outbreak among Siberian reindeer herders linked to thawing permafrost
+   72. [EPI] sev=0  India launches new yoga protocols to fight lifestyle diseases
+   73. [EPI] sev=0  Public health emergency in Pacific Islands reported by Médecins Sans Frontières
+   74. [EPI] sev=3  Vector-borne disease in Nepal reported by GOARN
+   75. [EPI] sev=0  Common diabetes drug works by acting on brain, study shows
+   76. [EPI] sev=0  Epidemic in Nigeria reported by ReliefWeb
+   77. [EPI] sev=0  South Sudan declares cholera emergency in Upper Nile state following severe flooding
+   78. [EPI] sev=0  Kissing can cause herpes
+   79. [EPI] sev=0  Epidemic in Niger reported by CDC
+   80. [SUPPLY] sev=0  Red Sea crisis forces 92% of container traffic to reroute — transit times increase 14 days
+   81. [EPI] sev=0  Brazil records worst dengue season in a decade — 4.2 million suspected cases in 2026
+   82. [ECO] sev=0  World: Locust Watch: Sub/seasonal precipitation predictions in the Desert Locust spring and summer b
+   83. [EPI] sev=4  Cholera cases rising sharply in flood-affected regions of South Asia, overwhelm local health centres
+   84. [SUPPLY] sev=0  RBI weighs e-cheques to modernise payment system
+   85. [EPI] sev=0  Health alert in Middle East reported by Red Cross
+   86. [ECO] sev=0  Kenya: World Water Day: Salesian Missions highlights water projects that make clean, fresh water ava
+   87. [SUPPLY] sev=4  FDA reports critical shortage of IV saline and contrast dye after Baxter plant flood damage
+   88. [EPI] sev=0  Bangladesh reports cholera surge in Cox's Bazar refugee camps — 1,100 cases since March
+   89. [EPI] sev=0  80% Indians cleared by tests are struck by heart attack
+   90. [EPI] sev=3  Epidemic in East Asia reported by GOARN
+   91. [EPI] sev=0  Thailand reports drug-resistant dengue strain circulating in Chiang Mai province
+   92. [ECO] sev=0  China's Henan province hit by 'once in 1,000 years' rainfall — Zhengzhou subway flooded
+   93. [EPI] sev=0  ProMED alert: Unexplained neurological syndrome in Vietnamese children — 18 cases under investigatio
+   94. [EPI] sev=0  Cholera death toll in Haiti surpasses 180 as clean water access remains critically limited
+   95. [EPI] sev=0  Vaccine shortage in Gaza Strip reported by CDC
+   96. [EPI] sev=0  Epidemic in East Asia reported by GOARN
+   97. [SUPPLY] sev=0  TSMC halts production at Fab 18 after 6.4 magnitude earthquake near Hualien, Taiwan
+   98. [SUPPLY] sev=0  Dr. Reddy's can supply leftover Olymviq stock to government hospitals after 30-day window
+   99. [EPI] sev=0  Nipah virus seropositive bats detected near Dhaka — Bangladesh heightens surveillance
+  100. [EPI] sev=0  ‘Unscientific, dangerous nonsense’: Why a hepatologist is warning against this popular athlete recov
+
+  ... showing 100 of 720 total points
