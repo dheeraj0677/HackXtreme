@@ -958,6 +958,56 @@ def switch_mode(mode: str):
     return {"active_mode": mode, "switched_at": datetime.utcnow().isoformat()}
 
 
+@app.get("/api/convergence")
+def get_convergence():
+    """Returns all alerts with cross-mode convergence warnings (Neural Moat detections)."""
+    # Gather all agent-processed alerts
+    live_alerts = load_live_alerts()
+    sim_alerts = _state.get("triggered_analyses", [])
+    all_alerts = live_alerts + sim_alerts
+
+    # Filter only those with convergence_warning
+    convergent = [
+        a for a in all_alerts
+        if a.get("convergence_warning") and not a.get("is_raw_feed")
+    ]
+
+    # Build mode-pair link counts for the visualization
+    mode_links = {}
+    for a in convergent:
+        warning = a.get("convergence_warning", "")
+        src_mode = a.get("mode", "?")
+        # Detect linked mode from warning text
+        linked_mode = None
+        if "EPI-LINK" in warning or "epi" in warning.lower():
+            linked_mode = "epi"
+        elif "ECO-LINK" in warning or "eco" in warning.lower() or "flood" in warning.lower() or "climate" in warning.lower():
+            linked_mode = "eco"
+        elif "SUPPLY-LINK" in warning or "supply" in warning.lower() or "port" in warning.lower() or "shortage" in warning.lower():
+            linked_mode = "supply"
+        
+        if linked_mode and linked_mode != src_mode:
+            pair = tuple(sorted([src_mode, linked_mode]))
+            key = f"{pair[0]}-{pair[1]}"
+            mode_links[key] = mode_links.get(key, 0) + 1
+
+    # Qdrant memory stats
+    memory_count = 0
+    try:
+        from Radio.sentry import get_qdrant_client, COLLECTION_NAME
+        info = get_qdrant_client().get_collection(COLLECTION_NAME)
+        memory_count = info.points_count
+    except Exception:
+        memory_count = len(_processed_headlines)
+
+    return {
+        "convergence_alerts": convergent[:20],
+        "total": len(convergent),
+        "mode_links": mode_links,
+        "memory_vectors": memory_count,
+    }
+
+
 # ─── Autonomous Background Loop ───────────────────────────────────────────────
 
 # Threat-signal keywords — headlines containing these get analyzed FIRST

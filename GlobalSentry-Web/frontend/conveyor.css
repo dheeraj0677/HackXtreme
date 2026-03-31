@@ -4,16 +4,17 @@ body.conveyor-body {
     color: #e2e8f0;
     margin: 0;
     font-family: 'Inter', sans-serif;
-    overflow-x: hidden;
+    overflow: hidden; /* Prevent ALL page-level scrolling */
 }
 
 .conveyor-main {
-    padding: 20px;
-    height: calc(100vh - 80px); /* Account for navbar */
+    padding: 84px 20px 20px;
+    height: 100vh;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: 16px;
+    overflow: hidden;
 }
 
 /* ── Pipeline Visualizer ──────────────────────────────────────────── */
@@ -155,7 +156,8 @@ body.conveyor-body {
     display: flex;
     gap: 20px;
     flex: 1;
-    min-height: 0; /* Allow flex shrink */
+    min-height: 0; /* Critical: allows flex child to shrink below content size */
+    overflow: hidden;
 }
 
 .kanban-col {
@@ -166,6 +168,7 @@ body.conveyor-body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    min-height: 0; /* Critical: allows flex child to shrink below content size */
 }
 
 .col-header {

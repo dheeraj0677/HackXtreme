@@ -508,15 +508,98 @@ document.addEventListener('DOMContentLoaded', () => {
   startStatusClock();
   updateMiniStats();
   loadThreatCounts();   // Populate pillar cards with real threat data
+  loadConvergence();    // 🧠 Neural Moat
 
   // Start recurring polling
   setInterval(pollSystemStatus, 2000);
   setInterval(() => loadAlerts(state.activeMode), 15000);
-  setInterval(loadThreatCounts, 10000);  // Refresh threat counts every 10s
+  setInterval(loadThreatCounts, 10000);
+  setInterval(loadConvergence, 8000);  // 🧠 Poll convergence every 8s
 
   // Init Infographics
   initCharts();
 });
+
+// ─── 🧠 Neural Moat — Convergence Fetcher ────────────────────────────────────
+async function loadConvergence() {
+  try {
+    const resp = await fetch(`${API_BASE}/convergence`);
+    if (!resp.ok) return;
+    const data = await resp.json();
+
+    // Update stats
+    const totalEl = document.getElementById('moat-total');
+    const vectorsEl = document.getElementById('moat-vectors');
+    if (totalEl) totalEl.textContent = data.total || 0;
+    if (vectorsEl) vectorsEl.textContent = data.memory_vectors || 0;
+
+    // Update SVG link map
+    updateMoatGraph(data.mode_links || {});
+
+    // Render convergence alerts
+    renderMoatAlerts(data.convergence_alerts || []);
+  } catch (e) {
+    console.warn('[NeuralMoat] Convergence fetch error:', e);
+  }
+}
+
+function updateMoatGraph(links) {
+  const linkPairs = {
+    'epi-eco':     { lineId: 'link-epi-eco',     badgeId: 'badge-epi-eco',     textId: 'badge-epi-eco-text' },
+    'eco-supply':  { lineId: 'link-eco-supply',   badgeId: 'badge-eco-supply',  textId: 'badge-eco-supply-text' },
+    'epi-supply':  { lineId: 'link-epi-supply',   badgeId: 'badge-epi-supply',  textId: 'badge-epi-supply-text' },
+  };
+
+  for (const [key, ids] of Object.entries(linkPairs)) {
+    const count = links[key] || 0;
+    const line = document.getElementById(ids.lineId);
+    const badge = document.getElementById(ids.badgeId);
+    const text = document.getElementById(ids.textId);
+
+    if (count > 0) {
+      line?.classList.add('active');
+      if (badge) badge.style.display = '';
+      if (text) text.textContent = count;
+    } else {
+      line?.classList.remove('active');
+      if (badge) badge.style.display = 'none';
+    }
+  }
+}
+
+function renderMoatAlerts(alerts) {
+  const container = document.getElementById('moat-alerts-list');
+  if (!container) return;
+
+  if (!alerts.length) {
+    container.innerHTML = `
+      <div class="moat-empty">
+        <span class="moat-empty-icon">🔍</span>
+        <span>Scanning for cross-mode patterns...</span>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = alerts.map(a => {
+    const warning = escapeHtml(a.convergence_warning || '').substring(0, 200);
+    const headline = escapeHtml(a.headline || '').substring(0, 100);
+    const mode = a.mode || 'eco';
+    const sevDots = Array.from({length: 5}, (_, i) =>
+      `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:2px;background:${i < (a.severity||3) ? '#6366f1' : 'var(--border-medium)'}"></span>`
+    ).join('');
+
+    return `
+      <div class="moat-alert-item">
+        <div class="moat-alert-headline">${headline}</div>
+        <div class="moat-alert-warning">${warning}</div>
+        <div class="moat-alert-meta">
+          <span class="moat-alert-badge badge-${mode}">${mode.toUpperCase()}</span>
+          <span class="moat-alert-badge badge-convergence">🧠 CONVERGENCE</span>
+          ${sevDots}
+        </div>
+      </div>`;
+  }).join('');
+}
 
 
 // ─── Threat Counts & Consequences for Pillar Cards ──────────────────────────

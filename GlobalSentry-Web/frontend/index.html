@@ -275,6 +275,86 @@
   </section>
 
   <!-- ═══════════════════════════════════════════
+       🧠 NEURAL MOAT — Cross-Mode Convergence
+  ═══════════════════════════════════════════ -->
+  <section class="neural-moat-section reveal" id="neural-moat">
+    <div class="section-header">
+      <div class="section-label">🧠 The Neural Moat</div>
+      <h2 class="section-title">Cross-Mode Convergence Engine</h2>
+      <p class="section-subtitle">When epidemics, climate events, and supply chain failures overlap — that's where the real danger hides. The Neural Moat finds these invisible connections.</p>
+    </div>
+
+    <div class="moat-layout">
+
+      <!-- LEFT: Network Graph Visualization -->
+      <div class="moat-graph-card">
+        <h4 class="moat-card-title">🔗 Inter-Sentry Link Map</h4>
+        <div class="moat-network" id="moat-network">
+          <svg viewBox="0 0 400 280" class="moat-svg" id="moat-svg">
+            <!-- Connection lines (drawn dynamically) -->
+            <line id="link-epi-eco" class="moat-link" x1="100" y1="80" x2="300" y2="80" />
+            <line id="link-eco-supply" class="moat-link" x1="300" y1="80" x2="200" y2="230" />
+            <line id="link-epi-supply" class="moat-link" x1="100" y1="80" x2="200" y2="230" />
+
+            <!-- Nodes -->
+            <g class="moat-node" id="moat-node-epi">
+              <circle cx="100" cy="80" r="38" class="node-circle node-epi" />
+              <text x="100" y="75" class="node-emoji">🩺</text>
+              <text x="100" y="96" class="node-label">EPI</text>
+            </g>
+            <g class="moat-node" id="moat-node-eco">
+              <circle cx="300" cy="80" r="38" class="node-circle node-eco" />
+              <text x="300" y="75" class="node-emoji">🌪️</text>
+              <text x="300" y="96" class="node-label">ECO</text>
+            </g>
+            <g class="moat-node" id="moat-node-supply">
+              <circle cx="200" cy="230" r="38" class="node-circle node-supply" />
+              <text x="200" y="225" class="node-emoji">♻️</text>
+              <text x="200" y="246" class="node-label">SUPPLY</text>
+            </g>
+
+            <!-- Link count badges -->
+            <g id="badge-epi-eco" class="link-badge" style="display:none;">
+              <circle cx="200" cy="65" r="14" class="badge-bg" />
+              <text x="200" y="70" class="badge-text" id="badge-epi-eco-text">0</text>
+            </g>
+            <g id="badge-eco-supply" class="link-badge" style="display:none;">
+              <circle cx="260" cy="165" r="14" class="badge-bg" />
+              <text x="260" y="170" class="badge-text" id="badge-eco-supply-text">0</text>
+            </g>
+            <g id="badge-epi-supply" class="link-badge" style="display:none;">
+              <circle cx="140" cy="165" r="14" class="badge-bg" />
+              <text x="140" y="170" class="badge-text" id="badge-epi-supply-text">0</text>
+            </g>
+          </svg>
+        </div>
+        <div class="moat-stats-row">
+          <div class="moat-stat">
+            <span class="moat-stat-val" id="moat-total">0</span>
+            <span class="moat-stat-label">Convergences</span>
+          </div>
+          <div class="moat-stat">
+            <span class="moat-stat-val" id="moat-vectors">0</span>
+            <span class="moat-stat-label">Vectors in Memory</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Live Convergence Alerts Feed -->
+      <div class="moat-alerts-card">
+        <h4 class="moat-card-title">⚡ Live Convergence Alerts</h4>
+        <div class="moat-alerts-list" id="moat-alerts-list">
+          <div class="moat-empty">
+            <span class="moat-empty-icon">🔍</span>
+            <span>Scanning for cross-mode patterns...</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
        LIVE INTELLIGENCE DASHBOARD
   ═══════════════════════════════════════════ -->
   <section class="dashboard-section" id="dashboard">
